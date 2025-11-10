@@ -3,13 +3,25 @@ package com.osg.restaurantcompanionapp.network
 import com.osg.restaurantcompanionapp.model.Order
 import com.osg.restaurantcompanionapp.model.MenuItem
 import com.osg.restaurantcompanionapp.model.OrderItem
+import io.github.cdimascio.dotenv.dotenv
 import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+
+
+val dotenv = dotenv()
+val baseUrl = dotenv["BASE_URL"]
+
+val retrofit = Retrofit.Builder()
+    .baseUrl(baseUrl)
+    .addConverterFactory(GsonConverterFactory.create())
+    .build()
 
 interface ApiService {
     // Orders
