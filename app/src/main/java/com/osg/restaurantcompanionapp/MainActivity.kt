@@ -11,7 +11,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.osg.restaurantcompanionapp.navigation.NavItem
 import com.osg.restaurantcompanionapp.ui.theme.RestaurantCompanionAppTheme
+import com.osg.restaurantcompanionapp.view.component.BaseScaffold
+import com.osg.restaurantcompanionapp.viewmodel.OrderViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,29 +26,28 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             RestaurantCompanionAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                AppRoot()
             }
         }
     }
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    RestaurantCompanionAppTheme {
-        Greeting("Android")
+fun AppRoot() {
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = NavItem.Orders.route) {
+        composable(NavItem.Orders.route) {
+            val vm: OrderViewModel = viewModel()
+            BaseScaffold(
+                navController = navController,
+                current = NavItem.Orders,
+                onAdd = { vm.onAdd() }
+            ) {
+                OrderListView(
+                    modifier = it,
+                    viewModel = vm
+                )
+            }
+        }
     }
 }

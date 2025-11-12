@@ -28,6 +28,17 @@ class MenuItemViewModel : ViewModel() {
     private val _deleteMenuItemResult = MutableLiveData<Boolean>()
     val deleteMenuItemResult: LiveData<Boolean> = _deleteMenuItemResult
 
+    private val _showAddScreen = MutableLiveData<Boolean>()
+    val showAddScreen: LiveData<Boolean> = _showAddScreen
+
+    fun onAdd() {
+        _showAddScreen.value = true
+    }
+
+    fun onAddScreenShown() {
+        _showAddScreen.value = false
+    }
+
     fun fetchMenuItems() {
         viewModelScope.launch {
             val menuItems = _menuItemRepository.getMenuItems()

@@ -28,6 +28,17 @@ class OrderViewModel : ViewModel() {
     private val _deleteOrderResult = MutableLiveData<Boolean>()
     val deleteOrderResult: LiveData<Boolean> = _deleteOrderResult
 
+    private val _showAddScreen = MutableLiveData<Boolean>()
+    val showAddScreen: LiveData<Boolean> = _showAddScreen
+
+    fun onAdd() {
+        _showAddScreen.value = true
+    }
+
+    fun onAddScreenShown() {
+        _showAddScreen.value = false
+    }
+
     fun fetchOrders() {
         viewModelScope.launch {
             val orders = _orderRepository.getOrders()
