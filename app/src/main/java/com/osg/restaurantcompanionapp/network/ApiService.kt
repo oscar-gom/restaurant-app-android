@@ -15,10 +15,9 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 
 
-val dotenv = dotenv()
-val baseUrl = dotenv["BASE_URL"]
+private const val baseUrl = "http://192.168.1.150:8080"
 
-val retrofit = Retrofit.Builder()
+val retrofit: Retrofit = Retrofit.Builder()
     .baseUrl(baseUrl)
     .addConverterFactory(GsonConverterFactory.create())
     .build()
