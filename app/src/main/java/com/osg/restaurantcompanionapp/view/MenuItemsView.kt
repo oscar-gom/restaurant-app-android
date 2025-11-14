@@ -1,19 +1,17 @@
-package com.osg.restaurantcompanionapp.view
-
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.osg.restaurantcompanionapp.viewmodel.OrderViewModel
+import com.osg.restaurantcompanionapp.viewmodel.MenuItemViewModel
 
 @Composable
-fun OrdersView(viewModel: OrderViewModel) {
+fun MenuItemsView(viewModel: MenuItemViewModel) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Text("Orders Screen - Coming soon")
+        Text("Menu Items Screen - Coming soon")
     }
 }

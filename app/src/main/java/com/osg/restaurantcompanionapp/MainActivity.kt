@@ -1,5 +1,6 @@
 package com.osg.restaurantcompanionapp
 
+import MenuItemsView
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -12,7 +13,9 @@ import androidx.navigation.compose.rememberNavController
 import com.osg.restaurantcompanionapp.navigation.NavItem
 import com.osg.restaurantcompanionapp.ui.theme.RestaurantCompanionAppTheme
 import com.osg.restaurantcompanionapp.view.OrdersView
+import com.osg.restaurantcompanionapp.view.SettingsView
 import com.osg.restaurantcompanionapp.view.component.BaseScaffold
+import com.osg.restaurantcompanionapp.viewmodel.MenuItemViewModel
 import com.osg.restaurantcompanionapp.viewmodel.OrderViewModel
 
 class MainActivity : ComponentActivity() {
@@ -38,10 +41,27 @@ fun AppRoot() {
                 current = NavItem.Orders,
                 onAdd = { vm.onAdd() }
             ) {
-                OrdersView(
-                    modifier = it,
-                    viewModel = vm
-                )
+                OrdersView(viewModel = vm)
+            }
+        }
+
+        composable(NavItem.MenuItem.route) {
+            val vm: MenuItemViewModel = viewModel()
+            BaseScaffold(
+                navController = navController,
+                current = NavItem.MenuItem,
+                onAdd = { vm.onAdd() }
+            ) {
+                MenuItemsView(viewModel = vm)
+            }
+        }
+
+        composable(NavItem.Settings.route) {
+            BaseScaffold(
+                navController = navController,
+                current = NavItem.Settings
+            ) {
+                SettingsView()
             }
         }
     }

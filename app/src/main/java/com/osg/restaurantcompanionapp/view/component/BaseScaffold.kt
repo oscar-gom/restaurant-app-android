@@ -3,7 +3,7 @@ package com.osg.restaurantcompanionapp.view.component
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -17,7 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import androidx.wear.compose.navigation.currentBackStackEntryAsState
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.osg.restaurantcompanionapp.navigation.NavItem
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -25,7 +25,7 @@ import com.osg.restaurantcompanionapp.navigation.NavItem
 fun BaseScaffold(
     navController: NavController,
     current: NavItem,
-    onAdd: () -> Unit,
+    onAdd: (() -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
     Scaffold(
@@ -33,8 +33,17 @@ fun BaseScaffold(
             TopAppBar(
                 title = { Text(current.title) },
                 actions = {
-                    IconButton(onClick = onAdd) {
-                        Icon(Icons.Default.Add, contentDescription = "Add")
+                    onAdd?.let { addAction ->
+                        IconButton(onClick = addAction) {
+                            Icon(Icons.Default.Add, contentDescription = "Add")
+                        }
+                    }
+                    IconButton(onClick = {
+                        if (navController.currentDestination?.route != NavItem.Settings.route) {
+                            navController.navigate(NavItem.Settings.route)
+                        }
+                    }) {
+                        Icon(Icons.Default.Settings, contentDescription = "Settings")
                     }
                 }
             )
@@ -43,7 +52,8 @@ fun BaseScaffold(
             NavigationBar {
                 val backStack by navController.currentBackStackEntryAsState()
                 val currentRoute = backStack?.destination?.route
-                NavItem.all.forEach { item ->
+                val bottomNavItems = listOf(NavItem.Orders, NavItem.MenuItem)
+                bottomNavItems.forEach { item ->
                     NavigationBarItem(
                         selected = currentRoute == item.route,
                         onClick = {

@@ -6,14 +6,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.osg.restaurantcompanionapp.viewmodel.OrderViewModel
 
 @Composable
-fun OrdersView(viewModel: OrderViewModel) {
+fun SettingsView() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Text("Orders Screen - Coming soon")
+        Text("Settings Screen - Coming soon")
     }
 }
+
