@@ -27,6 +27,9 @@ interface ApiService {
     @GET("/api/orders")
     suspend fun getOrders(): Response<List<Order>>
 
+    @GET("/api/orders/active")
+    suspend fun getActiveOrders(): Response<List<Order>>
+
     @GET("/api/orders/{id}")
     suspend fun getOrderById(@Path("id") id: Int): Response<Order>
 

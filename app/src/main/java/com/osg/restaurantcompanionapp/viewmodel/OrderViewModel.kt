@@ -46,6 +46,13 @@ class OrderViewModel : ViewModel() {
         }
     }
 
+    fun fetchActiveOrders() {
+        viewModelScope.launch {
+            val orders = _orderRepository.getActiveOrders()
+            _ordersLiveData.postValue(orders)
+        }
+    }
+
     fun fetchOrderById(id: Int) {
         viewModelScope.launch {
             val order = _orderRepository.getOrderById(id)

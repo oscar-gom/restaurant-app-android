@@ -9,6 +9,11 @@ class OrderRepository(private val apiService: ApiService) {
         return if (response.isSuccessful) response.body() else null
     }
 
+    suspend fun getActiveOrders(): List<Order>? {
+        val response = apiService.getActiveOrders()
+        return if (response.isSuccessful) response.body() else null
+    }
+
     suspend fun getOrderById(id: Int): Order? {
         val response = apiService.getOrderById(id)
         return if (response.isSuccessful) response.body() else null
