@@ -49,7 +49,7 @@ fun OrdersView(viewModel: OrderViewModel) {
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(orders!!) { order ->
-                        OrderItem(order = order)
+                        OrderListItem(order = order)
                     }
                 }
             }
@@ -58,7 +58,7 @@ fun OrdersView(viewModel: OrderViewModel) {
 }
 
 @Composable
-fun OrderItem(order: Order) {
+fun OrderListItem(order: Order) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
