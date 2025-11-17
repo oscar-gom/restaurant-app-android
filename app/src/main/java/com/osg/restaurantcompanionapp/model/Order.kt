@@ -8,7 +8,6 @@ data class Order(
 
 enum class Status(val status: String) {
     PENDING("PENDING"),
-    IN_PROGRESS("IN_PROGRESS"),
     COMPLETED("COMPLETED"),
     CANCELLED("CANCELLED")
 }

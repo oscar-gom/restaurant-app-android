@@ -74,7 +74,7 @@ fun OrderItem(order: Order) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Orden #${order.id}",
+                    text = "Order #${order.id}",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -82,7 +82,7 @@ fun OrderItem(order: Order) {
             }
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Hora: ${order.orderTime}",
+                text = "Time: ${order.orderTime}",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -97,12 +97,6 @@ fun StatusChip(status: Status) {
             Pair(
                 MaterialTheme.colorScheme.errorContainer,
                 MaterialTheme.colorScheme.onErrorContainer
-            )
-
-        Status.IN_PROGRESS ->
-            Pair(
-                MaterialTheme.colorScheme.primaryContainer,
-                MaterialTheme.colorScheme.onPrimaryContainer
             )
 
         Status.COMPLETED ->
@@ -124,10 +118,9 @@ fun StatusChip(status: Status) {
     ) {
         Text(
             text = when (status) {
-                Status.PENDING -> "Pendiente"
-                Status.IN_PROGRESS -> "En progreso"
-                Status.COMPLETED -> "Completada"
-                Status.CANCELLED -> "Cancelada"
+                Status.PENDING -> Status.COMPLETED.status
+                Status.COMPLETED -> Status.COMPLETED.status
+                Status.CANCELLED -> Status.CANCELLED.status
             },
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
             style = MaterialTheme.typography.labelMedium,
