@@ -3,7 +3,8 @@ package com.osg.restaurantcompanionapp.model
 data class Order(
     val id: Int,
     val orderTime: String,
-    val status: Status
+    val status: Status,
+    val tableNumber: Int
 )
 
 enum class Status(val status: String) {

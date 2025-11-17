@@ -82,6 +82,12 @@ fun OrderListItem(order: Order) {
             }
             Spacer(modifier = Modifier.height(8.dp))
             Text(
+                text = "Table: ${order.tableNumber}",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
                 text = "Time: ${order.orderTime}",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
