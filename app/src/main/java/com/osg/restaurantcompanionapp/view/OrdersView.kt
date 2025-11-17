@@ -118,7 +118,7 @@ fun StatusChip(status: Status) {
     ) {
         Text(
             text = when (status) {
-                Status.PENDING -> Status.COMPLETED.status
+                Status.PENDING -> Status.PENDING.status
                 Status.COMPLETED -> Status.COMPLETED.status
                 Status.CANCELLED -> Status.CANCELLED.status
             },
