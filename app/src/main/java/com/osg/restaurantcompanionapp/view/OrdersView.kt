@@ -15,6 +15,8 @@ import androidx.compose.ui.unit.dp
 import com.osg.restaurantcompanionapp.model.Order
 import com.osg.restaurantcompanionapp.model.Status
 import com.osg.restaurantcompanionapp.viewmodel.OrderViewModel
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun OrdersView(viewModel: OrderViewModel) {
@@ -59,6 +61,9 @@ fun OrdersView(viewModel: OrderViewModel) {
 
 @Composable
 fun OrderListItem(order: Order) {
+    val formattedTime = LocalDateTime.parse(order.orderTime)
+        .format(DateTimeFormatter.ofPattern("dd-MM-yyyy – HH:mm:ss"))
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
@@ -88,7 +93,7 @@ fun OrderListItem(order: Order) {
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Time: ${order.orderTime}",
+                text = "Time: $formattedTime",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
