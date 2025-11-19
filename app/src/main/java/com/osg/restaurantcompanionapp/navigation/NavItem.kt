@@ -10,7 +10,9 @@ sealed class NavItem(val route: String, val title: String, val icon: ImageVector
     object Orders : NavItem("orders", "Orders", Icons.AutoMirrored.Filled.List)
     object MenuItem : NavItem("menuItem", "Menu Items", Icons.Default.ShoppingCart)
     object Settings : NavItem("settings", "Settings", Icons.Default.Settings)
-    object OrderDetail : NavItem("orderDetail", "Order Detail", Icons.AutoMirrored.Filled.List)
+    object OrderDetail : NavItem("orderDetail/{orderId}", "Order Detail", Icons.AutoMirrored.Filled.List) {
+        fun createRoute(orderId: Int) = "orderDetail/$orderId"
+    }
 
     companion object {
         val all = listOf(Orders, MenuItem, Settings)

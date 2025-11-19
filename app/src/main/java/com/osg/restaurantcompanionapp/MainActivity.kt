@@ -10,7 +10,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.osg.restaurantcompanionapp.model.Order
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import com.osg.restaurantcompanionapp.navigation.NavItem
 import com.osg.restaurantcompanionapp.ui.theme.RestaurantCompanionAppTheme
 import com.osg.restaurantcompanionapp.view.OrderDetailView
@@ -47,14 +48,12 @@ fun AppRoot() {
             }
         }
 
-        composable(NavItem.OrderDetail.route) {
-            val order = navController.previousBackStackEntry
-                ?.savedStateHandle
-                ?.get<Order>("order")
-
-            if (order != null) {
-                OrderDetailView(order = order)
-            }
+        composable(
+            route = NavItem.OrderDetail.route,
+            arguments = listOf(navArgument("orderId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val orderId = backStackEntry.arguments?.getInt("orderId") ?: 0
+            OrderDetailView(orderId = orderId)
         }
 
         composable(NavItem.MenuItem.route) {

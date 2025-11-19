@@ -28,29 +28,42 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.osg.restaurantcompanionapp.model.Order
 import com.osg.restaurantcompanionapp.model.OrderItem
 import com.osg.restaurantcompanionapp.viewmodel.OrderItemViewModel
+import com.osg.restaurantcompanionapp.viewmodel.OrderViewModel
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OrderDetailView(
-    orderId: Long,
+    orderId: Int,
+    orderViewModel: OrderViewModel = viewModel(),
     orderItemViewModel: OrderItemViewModel = viewModel()
 ) {
+    val order by orderViewModel.orderLiveData.observeAsState()
     val orderItems by orderItemViewModel.orderItemsByOrderIdLiveData.observeAsState()
     val isLoading by orderItemViewModel.isLoading.observeAsState(false)
     val errorMessage by orderItemViewModel.errorMessage.observeAsState()
 
-    LaunchedEffect(order.id) {
-        orderItemViewModel.fetchOrderItemsByOrderId(order.id)
+    LaunchedEffect(orderId) {
+        orderViewModel.fetchOrderById(orderId)
+    }
+
+    LaunchedEffect(order) {
+        order?.let {
+            orderItemViewModel.fetchOrderItemsByOrderId(it.id.toInt())
+        }
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Pedido #${order.id} – ${order.status.status}") }
+                title = {
+                    Text(
+                        if (order != null) "#${order!!.id} – ${order!!.status.status}"
+                        else "Loading..."
+                    )
+                }
             )
         }
     ) { innerPadding ->

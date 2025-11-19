@@ -56,8 +56,7 @@ fun OrdersView(viewModel: OrderViewModel, navController: NavController) {
                         OrderListItem(
                             order = order,
                             onClick = {
-                                navController.currentBackStackEntry?.savedStateHandle?.set("order", order)
-                                navController.navigate("orderDetail")
+                                navController.navigate("orderDetail/${order.id}")
                             }
                         )
                     }
