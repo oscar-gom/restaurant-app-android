@@ -36,7 +36,7 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OrderDetailView(
-    order: Order,
+    orderId: Long,
     orderItemViewModel: OrderItemViewModel = viewModel()
 ) {
     val orderItems by orderItemViewModel.orderItemsByOrderIdLiveData.observeAsState()

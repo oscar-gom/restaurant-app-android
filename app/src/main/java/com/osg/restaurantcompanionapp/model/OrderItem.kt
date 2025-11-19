@@ -1,10 +1,10 @@
 package com.osg.restaurantcompanionapp.model
 
 data class OrderItem(
-    val menuItemId: Int,
+    val orderId: Long,
+    val menuItemId: Long,
     val menuItemName: String,
     val menuItemPrice: Double,
-    val orderId: Int,
     val quantity: Int,
     val specialInstructions: String,
     val subtotal: Double

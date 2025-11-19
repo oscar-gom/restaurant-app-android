@@ -1,7 +1,7 @@
 package com.osg.restaurantcompanionapp.model
 
 data class Order(
-    val id: Int,
+    val id: Long,
     val orderTime: String,
     val status: Status,
     val tableNumber: Int

@@ -1,5 +1,6 @@
 package com.osg.restaurantcompanionapp.view
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -12,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.osg.restaurantcompanionapp.model.Order
 import com.osg.restaurantcompanionapp.model.Status
 import com.osg.restaurantcompanionapp.viewmodel.OrderViewModel
@@ -19,7 +21,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun OrdersView(viewModel: OrderViewModel) {
+fun OrdersView(viewModel: OrderViewModel, navController: NavController) {
     val orders by viewModel.ordersLiveData.observeAsState()
 
     LaunchedEffect(Unit) {
@@ -51,7 +53,13 @@ fun OrdersView(viewModel: OrderViewModel) {
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(orders!!) { order ->
-                        OrderListItem(order = order)
+                        OrderListItem(
+                            order = order,
+                            onClick = {
+                                navController.currentBackStackEntry?.savedStateHandle?.set("order", order)
+                                navController.navigate("orderDetail")
+                            }
+                        )
                     }
                 }
             }
@@ -60,12 +68,14 @@ fun OrdersView(viewModel: OrderViewModel) {
 }
 
 @Composable
-fun OrderListItem(order: Order) {
+fun OrderListItem(order: Order, onClick: () -> Unit) {
     val formattedTime = LocalDateTime.parse(order.orderTime)
         .format(DateTimeFormatter.ofPattern("dd-MM-yyyy – HH:mm:ss"))
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(

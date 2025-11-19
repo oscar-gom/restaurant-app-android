@@ -10,8 +10,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.osg.restaurantcompanionapp.model.Order
 import com.osg.restaurantcompanionapp.navigation.NavItem
 import com.osg.restaurantcompanionapp.ui.theme.RestaurantCompanionAppTheme
+import com.osg.restaurantcompanionapp.view.OrderDetailView
 import com.osg.restaurantcompanionapp.view.OrdersView
 import com.osg.restaurantcompanionapp.view.SettingsView
 import com.osg.restaurantcompanionapp.view.component.BaseScaffold
@@ -41,7 +43,17 @@ fun AppRoot() {
                 current = NavItem.Orders,
                 onAdd = { vm.onAdd() }
             ) {
-                OrdersView(viewModel = vm)
+                OrdersView(viewModel = vm, navController = navController)
+            }
+        }
+
+        composable(NavItem.OrderDetail.route) {
+            val order = navController.previousBackStackEntry
+                ?.savedStateHandle
+                ?.get<Order>("order")
+
+            if (order != null) {
+                OrderDetailView(order = order)
             }
         }
 
