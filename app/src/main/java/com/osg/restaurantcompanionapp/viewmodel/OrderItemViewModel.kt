@@ -37,6 +37,12 @@ class OrderItemViewModel : ViewModel() {
     private val _showAddScreen = MutableLiveData<Boolean>()
     val showAddScreen: LiveData<Boolean> = _showAddScreen
 
+    private val _isLoading = MutableLiveData(false)
+    val isLoading: LiveData<Boolean> = _isLoading
+
+    private val _errorMessage = MutableLiveData<String?>()
+    val errorMessage: LiveData<String?> = _errorMessage
+
     fun onAdd() {
         _showAddScreen.value = true
     }
@@ -61,8 +67,21 @@ class OrderItemViewModel : ViewModel() {
 
     fun fetchOrderItemsByOrderId(orderId: Int) {
         viewModelScope.launch {
-            val orderItems = _orderItemRepository.getOrderItemsByOrderId(orderId)
-            _orderItemsByOrderIdLiveData.postValue(orderItems)
+            _isLoading.postValue(true)
+            _errorMessage.postValue(null)
+            try {
+                val orderItems = _orderItemRepository.getOrderItemsByOrderId(orderId)
+                if (orderItems != null) {
+                    _orderItemsByOrderIdLiveData.postValue(orderItems)
+                } else {
+                    _errorMessage.postValue("Cant load order items for order ID $orderId")
+                }
+            } catch (exception: Exception) {
+                _errorMessage.postValue(exception.message ?: "Unknown error")
+                _orderItemsByOrderIdLiveData.postValue(emptyList())
+            } finally {
+                _isLoading.postValue(false)
+            }
         }
     }
 
