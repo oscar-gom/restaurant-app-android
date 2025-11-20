@@ -9,6 +9,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -17,15 +20,30 @@ import androidx.navigation.NavController
 import com.osg.restaurantcompanionapp.model.Order
 import com.osg.restaurantcompanionapp.model.Status
 import com.osg.restaurantcompanionapp.viewmodel.OrderViewModel
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OrdersView(viewModel: OrderViewModel, navController: NavController) {
     val orders by viewModel.ordersLiveData.observeAsState()
+    val showAddScreen by viewModel.showAddScreen.observeAsState(false)
+
+    val sheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         viewModel.fetchActiveOrders()
+    }
+
+    LaunchedEffect(showAddScreen) {
+        if (showAddScreen) {
+            scope.launch {
+                sheetState.show()
+            }
+            viewModel.onAddScreenShown()
+        }
     }
 
     Box(
@@ -62,6 +80,27 @@ fun OrdersView(viewModel: OrderViewModel, navController: NavController) {
                     }
                 }
             }
+        }
+    }
+
+    if (sheetState.isVisible) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                scope.launch {
+                    sheetState.hide()
+                }
+            },
+            sheetState = sheetState
+        ) {
+            CreateOrderView(
+                viewModel = viewModel,
+                onOrderCreated = {
+                    scope.launch {
+                        sheetState.hide()
+                        viewModel.fetchActiveOrders()
+                    }
+                }
+            )
         }
     }
 }
@@ -146,5 +185,77 @@ fun StatusChip(status: Status) {
             style = MaterialTheme.typography.labelMedium,
             color = textColor
         )
+    }
+}
+
+@Composable
+fun CreateOrderView(
+    viewModel: OrderViewModel,
+    onOrderCreated: () -> Unit
+) {
+    val tableNum = remember { mutableStateOf("") }
+    val isLoading = remember { mutableStateOf(false) }
+    val createOrderResult by viewModel.createOrderResult.observeAsState()
+
+    LaunchedEffect(createOrderResult) {
+        if (createOrderResult != null) {
+            isLoading.value = false
+            onOrderCreated()
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .padding(bottom = 32.dp),
+    ) {
+        Text(
+            text = "Create New Order",
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
+            value = tableNum.value,
+            onValueChange = { tableNum.value = it },
+            label = { Text("Table Number") },
+            placeholder = { Text("123") },
+            prefix = { Text("#") },
+            singleLine = true,
+            maxLines = 1,
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !isLoading.value
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Button(
+            onClick = {
+                if (tableNum.value.isNotBlank()) {
+                    isLoading.value = true
+                    val newOrder = Order(
+                        id = 0,
+                        tableNumber = tableNum.value.toIntOrNull() ?: 0,
+                        orderTime = LocalDateTime.now().toString(),
+                        status = Status.PENDING
+                    )
+                    viewModel.createOrder(newOrder)
+                }
+            },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !isLoading.value && tableNum.value.isNotBlank()
+        ) {
+            if (isLoading.value) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp),
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            } else {
+                Text("Create Order")
+            }
+        }
     }
 }
