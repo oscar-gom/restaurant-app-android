@@ -200,7 +200,9 @@ fun CreateOrderView(
     LaunchedEffect(createOrderResult) {
         if (createOrderResult != null) {
             isLoading.value = false
+            tableNum.value = ""
             onOrderCreated()
+            viewModel.resetCreateOrderResult()
         }
     }
 
@@ -223,7 +225,7 @@ fun CreateOrderView(
             onValueChange = { tableNum.value = it },
             label = { Text("Table Number") },
             placeholder = { Text("123") },
-            prefix = { Text("#") },
+            prefix = { Text("Nº ") },
             singleLine = true,
             maxLines = 1,
             modifier = Modifier.fillMaxWidth(),
@@ -238,8 +240,7 @@ fun CreateOrderView(
                     isLoading.value = true
                     val newOrder = Order(
                         id = 0,
-                        tableNumber = tableNum.value.toIntOrNull() ?: 0,
-                        orderTime = LocalDateTime.now().toString(),
+                        tableNumber = tableNum.value.toInt(),
                         status = Status.PENDING
                     )
                     viewModel.createOrder(newOrder)

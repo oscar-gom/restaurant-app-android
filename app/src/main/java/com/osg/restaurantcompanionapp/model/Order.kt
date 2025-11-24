@@ -1,8 +1,10 @@
 package com.osg.restaurantcompanionapp.model
 
+import java.time.LocalDateTime
+
 data class Order(
     val id: Long,
-    val orderTime: String,
+    val orderTime: String = LocalDateTime.now().toString(),
     val status: Status,
     val tableNumber: Int
 )

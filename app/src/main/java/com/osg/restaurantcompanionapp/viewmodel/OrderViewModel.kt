@@ -1,5 +1,6 @@
 package com.osg.restaurantcompanionapp.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.MutableLiveData
@@ -21,6 +22,9 @@ class OrderViewModel : ViewModel() {
 
     private val _createOrderResult = MutableLiveData<Order?>()
     val createOrderResult: LiveData<Order?> = _createOrderResult
+
+    private val _createOrderError = MutableLiveData<String?>()
+    val createOrderError: LiveData<String?> = _createOrderError
 
     private val _updateOrderResult = MutableLiveData<Order?>()
     val updateOrderResult: LiveData<Order?> = _updateOrderResult
@@ -62,9 +66,27 @@ class OrderViewModel : ViewModel() {
 
     fun createOrder(order: Order) {
         viewModelScope.launch {
-            val result = _orderRepository.createOrder(order)
-            _createOrderResult.postValue(result)
+            _createOrderError.postValue(null)
+            _createOrderResult.postValue(null)
+            try {
+                val result = _orderRepository.createOrder(order)
+                if (result != null) {
+                    _createOrderResult.postValue(result)
+                } else {
+                    _createOrderError.postValue("No se pudo crear la orden. Verifica la conexión o los datos.")
+                }
+            } catch (e: Exception) {
+                _createOrderError.postValue(e.message ?: "Error inesperado al crear la orden")
+            }
         }
+    }
+
+    fun resetCreateOrderResult() {
+        _createOrderResult.postValue(null)
+    }
+
+    fun resetCreateOrderError() {
+        _createOrderError.postValue(null)
     }
 
     fun updateOrder(id: Int, order: Order) {
