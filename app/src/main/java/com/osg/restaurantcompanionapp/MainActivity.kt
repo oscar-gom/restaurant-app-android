@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -13,6 +15,7 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.osg.restaurantcompanionapp.navigation.NavItem
 import com.osg.restaurantcompanionapp.ui.theme.RestaurantCompanionAppTheme
+import com.osg.restaurantcompanionapp.view.MenuItemDetailView
 import com.osg.restaurantcompanionapp.view.MenuItemsView
 import com.osg.restaurantcompanionapp.view.OrderDetailView
 import com.osg.restaurantcompanionapp.view.OrdersView
@@ -36,7 +39,14 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppRoot() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = NavItem.Orders.route) {
+    NavHost(
+        navController = navController,
+        startDestination = NavItem.Orders.route,
+        enterTransition = { EnterTransition.None },
+        exitTransition = { ExitTransition.None },
+        popEnterTransition = { EnterTransition.None },
+        popExitTransition = { ExitTransition.None }
+    ) {
         composable(NavItem.Orders.route) {
             val vm: OrderViewModel = viewModel()
             BaseScaffold(
