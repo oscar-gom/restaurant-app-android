@@ -73,8 +73,16 @@ fun AppRoot() {
                 current = NavItem.MenuItem,
                 onAdd = { vm.onAdd() }
             ) {
-                MenuItemsView(viewModel = vm)
+                MenuItemsView(viewModel = vm, navController = navController)
             }
+        }
+
+        composable(
+            route = NavItem.MenuItemDetail.route,
+            arguments = listOf(navArgument("menuItemId") { type = NavType.LongType })
+        ) { backStackEntry ->
+            val menuItemId = backStackEntry.arguments?.getLong("menuItemId") ?: 0L
+            MenuItemDetailView(menuItemId = menuItemId, navController = navController)
         }
 
         composable(NavItem.Settings.route) {

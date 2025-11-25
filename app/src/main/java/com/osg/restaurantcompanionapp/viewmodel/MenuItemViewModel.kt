@@ -77,4 +77,8 @@ class MenuItemViewModel : ViewModel() {
     fun resetCreateMenuItemResult() {
         _createMenuItemResult.value = null
     }
+
+    fun resetUpdateMenuItemResult() {
+        _updateMenuItemResult.value = null
+    }
 }

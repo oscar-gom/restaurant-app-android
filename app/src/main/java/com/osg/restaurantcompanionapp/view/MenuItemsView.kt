@@ -1,5 +1,6 @@
 package com.osg.restaurantcompanionapp.view
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,13 +30,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.osg.restaurantcompanionapp.model.MenuItem
 import com.osg.restaurantcompanionapp.viewmodel.MenuItemViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MenuItemsView(viewModel: MenuItemViewModel) {
+fun MenuItemsView(viewModel: MenuItemViewModel, navController: NavController) {
     val menuItems by viewModel.menuItemsLiveData.observeAsState()
     val showAddScreen by viewModel.showAddScreen.observeAsState(false)
 
@@ -80,7 +82,12 @@ fun MenuItemsView(viewModel: MenuItemViewModel) {
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(menuItems!!) { menuItem ->
-                        MenuItemItem(menuItem = menuItem)
+                        MenuItemItem(
+                            menuItem = menuItem,
+                            onClick = {
+                                navController.navigate("menuItemDetail/${menuItem.id}")
+                            }
+                        )
                     }
                 }
             }
@@ -110,9 +117,11 @@ fun MenuItemsView(viewModel: MenuItemViewModel) {
 }
 
 @Composable
-fun MenuItemItem(menuItem: MenuItem) {
+fun MenuItemItem(menuItem: MenuItem, onClick: () -> Unit) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
