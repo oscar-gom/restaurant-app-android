@@ -73,4 +73,8 @@ class MenuItemViewModel : ViewModel() {
             _deleteMenuItemResult.postValue(result)
         }
     }
+
+    fun resetCreateMenuItemResult() {
+        _createMenuItemResult.value = null
+    }
 }

@@ -1,6 +1,5 @@
 package com.osg.restaurantcompanionapp
 
-import MenuItemsView
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,6 +13,7 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.osg.restaurantcompanionapp.navigation.NavItem
 import com.osg.restaurantcompanionapp.ui.theme.RestaurantCompanionAppTheme
+import com.osg.restaurantcompanionapp.view.MenuItemsView
 import com.osg.restaurantcompanionapp.view.OrderDetailView
 import com.osg.restaurantcompanionapp.view.OrdersView
 import com.osg.restaurantcompanionapp.view.SettingsView
