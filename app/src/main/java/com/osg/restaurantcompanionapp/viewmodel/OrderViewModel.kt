@@ -1,14 +1,13 @@
 package com.osg.restaurantcompanionapp.viewmodel
 
-import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.LiveData
 import com.osg.restaurantcompanionapp.model.Order
-import com.osg.restaurantcompanionapp.repository.OrderRepository
 import com.osg.restaurantcompanionapp.network.ApiService
 import com.osg.restaurantcompanionapp.network.retrofit
+import com.osg.restaurantcompanionapp.repository.OrderRepository
 import kotlinx.coroutines.launch
 
 class OrderViewModel : ViewModel() {
@@ -103,27 +102,17 @@ class OrderViewModel : ViewModel() {
         }
     }
 
-    /**
-     * Añade o actualiza un order en la lista actual
-     * Este método es llamado cuando se recibe un nuevo order por WebSocket
-     */
     fun addOrUpdateOrder(order: Order) {
         val currentOrders = _ordersLiveData.value?.toMutableList() ?: mutableListOf()
 
-        // Buscar si el order ya existe en la lista
         val existingIndex = currentOrders.indexOfFirst { it.id == order.id }
 
         if (existingIndex != -1) {
-            // Actualizar el order existente
             currentOrders[existingIndex] = order
-            Log.d("OrderViewModel", "Order actualizado: ${order.id}")
         } else {
-            // Añadir el nuevo order al inicio de la lista
-            currentOrders.add(0, order)
-            Log.d("OrderViewModel", "Nuevo order añadido: ${order.id}")
+            currentOrders.add(order)
         }
 
-        // Actualizar el LiveData en el hilo principal
         _ordersLiveData.postValue(currentOrders)
     }
 }
