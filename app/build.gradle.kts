@@ -54,6 +54,7 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:3.0.0")
     implementation("com.google.code.gson:gson:2.13.2")
     implementation("io.github.cdimascio:dotenv-kotlin:6.5.1")
+    implementation("com.squareup.okhttp3:okhttp-ws:3.4.2")
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.compose.navigation)
     implementation(libs.androidx.navigation.compose)
