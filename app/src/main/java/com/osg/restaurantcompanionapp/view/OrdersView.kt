@@ -16,10 +16,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.osg.restaurantcompanionapp.model.Order
 import com.osg.restaurantcompanionapp.model.Status
+import com.osg.restaurantcompanionapp.network.WS_URL
+import com.osg.restaurantcompanionapp.network.ORDERS_TOPIC
 import com.osg.restaurantcompanionapp.viewmodel.OrderViewModel
+import com.osg.restaurantcompanionapp.viewmodel.WebSocketViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -30,12 +34,21 @@ fun OrdersView(viewModel: OrderViewModel, navController: NavController) {
     val orders by viewModel.ordersLiveData.observeAsState()
     val showAddScreen by viewModel.showAddScreen.observeAsState(false)
 
+    val webSocketViewModel: WebSocketViewModel = viewModel()
+
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         viewModel.fetchActiveOrders()
+
+        webSocketViewModel.initialize(
+            orderViewModel = viewModel,
+            wsUrl = WS_URL,
+            topic = ORDERS_TOPIC
+        )
     }
+
 
     LaunchedEffect(showAddScreen) {
         if (showAddScreen) {

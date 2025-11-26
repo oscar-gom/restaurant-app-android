@@ -102,4 +102,28 @@ class OrderViewModel : ViewModel() {
             _deleteOrderResult.postValue(result)
         }
     }
+
+    /**
+     * Añade o actualiza un order en la lista actual
+     * Este método es llamado cuando se recibe un nuevo order por WebSocket
+     */
+    fun addOrUpdateOrder(order: Order) {
+        val currentOrders = _ordersLiveData.value?.toMutableList() ?: mutableListOf()
+
+        // Buscar si el order ya existe en la lista
+        val existingIndex = currentOrders.indexOfFirst { it.id == order.id }
+
+        if (existingIndex != -1) {
+            // Actualizar el order existente
+            currentOrders[existingIndex] = order
+            Log.d("OrderViewModel", "Order actualizado: ${order.id}")
+        } else {
+            // Añadir el nuevo order al inicio de la lista
+            currentOrders.add(0, order)
+            Log.d("OrderViewModel", "Nuevo order añadido: ${order.id}")
+        }
+
+        // Actualizar el LiveData en el hilo principal
+        _ordersLiveData.postValue(currentOrders)
+    }
 }

@@ -1,9 +1,8 @@
 package com.osg.restaurantcompanionapp.network
 
-import com.osg.restaurantcompanionapp.model.Order
 import com.osg.restaurantcompanionapp.model.MenuItem
+import com.osg.restaurantcompanionapp.model.Order
 import com.osg.restaurantcompanionapp.model.OrderItem
-import io.github.cdimascio.dotenv.dotenv
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -16,6 +15,10 @@ import retrofit2.http.Path
 
 
 private const val baseUrl = "http://192.168.1.150:8080"
+
+// URL de WebSocket STOMP
+const val WS_URL = "ws://192.168.1.150:8080/ws"
+const val ORDERS_TOPIC = "/topic/orders"
 
 val retrofit: Retrofit = Retrofit.Builder()
     .baseUrl(baseUrl)
