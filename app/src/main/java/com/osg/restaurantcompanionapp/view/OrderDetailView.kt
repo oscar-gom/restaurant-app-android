@@ -11,26 +11,37 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.osg.restaurantcompanionapp.model.OrderItem
+import com.osg.restaurantcompanionapp.viewmodel.MenuItemViewModel
 import com.osg.restaurantcompanionapp.viewmodel.OrderItemViewModel
 import com.osg.restaurantcompanionapp.viewmodel.OrderViewModel
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,12 +49,17 @@ import java.util.Locale
 fun OrderDetailView(
     orderId: Int,
     orderViewModel: OrderViewModel = viewModel(),
-    orderItemViewModel: OrderItemViewModel = viewModel()
+    orderItemViewModel: OrderItemViewModel = viewModel(),
+    menuItemViewModel: MenuItemViewModel = viewModel()
 ) {
     val order by orderViewModel.orderLiveData.observeAsState()
     val orderItems by orderItemViewModel.orderItemsByOrderIdLiveData.observeAsState()
     val isLoading by orderItemViewModel.isLoading.observeAsState(false)
     val errorMessage by orderItemViewModel.errorMessage.observeAsState()
+
+    val sheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
+    var showAddSheet by remember { mutableStateOf(false) }
 
     LaunchedEffect(orderId) {
         orderViewModel.fetchOrderById(orderId)
@@ -63,6 +79,16 @@ fun OrderDetailView(
                         if (order != null) "#${order!!.id} – ${order!!.status.status}"
                         else "Loading..."
                     )
+                },
+                actions = {
+                    IconButton(onClick = {
+                        showAddSheet = true
+                    }) {
+                        Icon(
+                            imageVector = androidx.compose.material.icons.Icons.Default.Add,
+                            contentDescription = "Add menu item to order"
+                        )
+                    }
                 }
             )
         }
@@ -105,6 +131,30 @@ fun OrderDetailView(
                         modifier = Modifier.fillMaxSize()
                     )
                 }
+            }
+        }
+    }
+
+    if (showAddSheet) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showAddSheet = false
+            },
+            sheetState = sheetState
+        ) {
+            order?.let { currentOrder ->
+                AddMenuItemToOrderView(
+                    orderId = currentOrder.id,
+                    menuItemViewModel = menuItemViewModel,
+                    orderItemViewModel = orderItemViewModel,
+                    onOrderItemAdded = {
+                        scope.launch {
+                            sheetState.hide()
+                            showAddSheet = false
+                            orderItemViewModel.fetchOrderItemsByOrderId(currentOrder.id.toInt())
+                        }
+                    }
+                )
             }
         }
     }
