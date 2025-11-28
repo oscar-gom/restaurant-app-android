@@ -52,7 +52,6 @@ fun AppRoot() {
             BaseScaffold(
                 navController = navController,
                 current = NavItem.Orders,
-                onAdd = { vm.onAdd() }
             ) {
                 OrdersView(viewModel = vm, navController = navController)
             }
@@ -71,7 +70,6 @@ fun AppRoot() {
             BaseScaffold(
                 navController = navController,
                 current = NavItem.MenuItem,
-                onAdd = { vm.onAdd() }
             ) {
                 MenuItemsView(viewModel = vm, navController = navController)
             }

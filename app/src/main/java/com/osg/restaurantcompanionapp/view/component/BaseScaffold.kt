@@ -25,7 +25,6 @@ import com.osg.restaurantcompanionapp.navigation.NavItem
 fun BaseScaffold(
     navController: NavController,
     current: NavItem,
-    onAdd: (() -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
     Scaffold(
@@ -33,11 +32,6 @@ fun BaseScaffold(
             TopAppBar(
                 title = { Text(current.title) },
                 actions = {
-                    onAdd?.let { addAction ->
-                        IconButton(onClick = addAction) {
-                            Icon(Icons.Default.Add, contentDescription = "Add")
-                        }
-                    }
                     IconButton(onClick = {
                         if (navController.currentDestination?.route != NavItem.Settings.route) {
                             navController.navigate(NavItem.Settings.route)

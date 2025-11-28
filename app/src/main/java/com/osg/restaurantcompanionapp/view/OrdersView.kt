@@ -1,10 +1,37 @@
 package com.osg.restaurantcompanionapp.view
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -21,8 +48,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.osg.restaurantcompanionapp.model.Order
 import com.osg.restaurantcompanionapp.model.Status
-import com.osg.restaurantcompanionapp.network.WS_URL
 import com.osg.restaurantcompanionapp.network.ORDERS_TOPIC
+import com.osg.restaurantcompanionapp.network.WS_URL
 import com.osg.restaurantcompanionapp.viewmodel.OrderViewModel
 import com.osg.restaurantcompanionapp.viewmodel.WebSocketViewModel
 import kotlinx.coroutines.launch
@@ -68,65 +95,81 @@ fun OrdersView(viewModel: OrderViewModel, navController: NavController) {
         }
     }
 
-    Column(
+    Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        SingleChoiceSegmentedButtonRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-        ) {
-            SegmentedButton(
-                selected = !showActiveOnly.value,
-                onClick = { showActiveOnly.value = false },
-                shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2)
-            ) {
-                Text("Todos")
-            }
-            SegmentedButton(
-                selected = showActiveOnly.value,
-                onClick = { showActiveOnly.value = true },
-                shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2)
-            ) {
-                Text("Activos")
-            }
-        }
-
-        Box(
+        Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            when {
-                orders == null -> {
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center)
-                    )
+            SingleChoiceSegmentedButtonRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+            ) {
+                SegmentedButton(
+                    selected = !showActiveOnly.value,
+                    onClick = { showActiveOnly.value = false },
+                    shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2)
+                ) {
+                    Text("Todos")
                 }
-
-                orders!!.isEmpty() -> {
-                    Text(
-                        text = if (showActiveOnly.value) "No hay órdenes activas" else "No hay órdenes",
-                        modifier = Modifier.align(Alignment.Center),
-                        style = MaterialTheme.typography.bodyLarge
-                    )
+                SegmentedButton(
+                    selected = showActiveOnly.value,
+                    onClick = { showActiveOnly.value = true },
+                    shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2)
+                ) {
+                    Text("Activos")
                 }
+            }
 
-                else -> {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(orders!!) { order ->
-                            OrderListItem(
-                                order = order,
-                                onClick = {
-                                    navController.navigate("orderDetail/${order.id}")
-                                }
-                            )
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                when {
+                    orders == null -> {
+                        CircularProgressIndicator(
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
+
+                    orders!!.isEmpty() -> {
+                        Text(
+                            text = if (showActiveOnly.value) "No hay órdenes activas" else "No hay órdenes",
+                            modifier = Modifier.align(Alignment.Center),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+
+                    else -> {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            items(orders!!) { order ->
+                                OrderListItem(
+                                    order = order,
+                                    onClick = {
+                                        navController.navigate("orderDetail/${order.id}")
+                                    }
+                                )
+                            }
                         }
                     }
                 }
             }
+        }
+
+        FloatingActionButton(
+            onClick = { viewModel.onAdd() },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Add order"
+            )
         }
     }
 

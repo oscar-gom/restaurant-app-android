@@ -11,13 +11,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -79,18 +79,20 @@ fun OrderDetailView(
                         if (order != null) "#${order!!.id} – ${order!!.status.status}"
                         else "Loading..."
                     )
-                },
-                actions = {
-                    IconButton(onClick = {
-                        showAddSheet = true
-                    }) {
-                        Icon(
-                            imageVector = androidx.compose.material.icons.Icons.Default.Add,
-                            contentDescription = "Add menu item to order"
-                        )
-                    }
                 }
             )
+        },
+        floatingActionButton = {
+            androidx.compose.material3.FloatingActionButton(
+                onClick = {
+                    showAddSheet = true
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add menu item to order"
+                )
+            }
         }
     ) { innerPadding ->
         Box(
