@@ -140,17 +140,20 @@ fun OrderDetailView(
     if (showAddSheet) {
         ModalBottomSheet(
             onDismissRequest = {
+                showAddSheet = false
             },
             sheetState = sheetState
         ) {
             order?.let { currentOrder ->
                 AddMenuItemToOrderView(
                     orderId = currentOrder.id,
+                    existingOrderItems = orderItems ?: emptyList(),
                     menuItemViewModel = menuItemViewModel,
                     orderItemViewModel = orderItemViewModel,
                     onOrderItemAdded = {
                         scope.launch {
                             sheetState.hide()
+                            showAddSheet = false
                             orderItemViewModel.fetchOrderItemsByOrderId(currentOrder.id.toInt())
                         }
                     }

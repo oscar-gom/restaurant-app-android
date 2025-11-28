@@ -16,6 +16,7 @@ import java.util.Locale
 @Composable
 fun AddMenuItemToOrderView(
     orderId: Long,
+    existingOrderItems: List<OrderItem>,
     menuItemViewModel: MenuItemViewModel,
     orderItemViewModel: OrderItemViewModel,
     onOrderItemAdded: () -> Unit
@@ -29,6 +30,7 @@ fun AddMenuItemToOrderView(
     var expanded by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(false) }
     var quantityError by remember { mutableStateOf<String?>(null) }
+    var duplicateError by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {
         menuItemViewModel.fetchMenuItems()
@@ -40,7 +42,21 @@ fun AddMenuItemToOrderView(
             selectedMenuItem = null
             quantity = "1"
             specialInstructions = ""
+            duplicateError = null
             onOrderItemAdded()
+        }
+    }
+
+    LaunchedEffect(selectedMenuItem) {
+        if (selectedMenuItem != null) {
+            val existsInOrder = existingOrderItems.any { it.menuItemId == selectedMenuItem!!.id }
+            duplicateError = if (existsInOrder) {
+                "This menu item is already in the order"
+            } else {
+                null
+            }
+        } else {
+            duplicateError = null
         }
     }
 
@@ -72,7 +88,13 @@ fun AddMenuItemToOrderView(
                 modifier = Modifier
                     .fillMaxWidth()
                     .menuAnchor(MenuAnchorType.PrimaryNotEditable),
-                enabled = !isLoading
+                enabled = !isLoading,
+                isError = duplicateError != null,
+                supportingText = {
+                    if (duplicateError != null) {
+                        Text(text = duplicateError!!)
+                    }
+                }
             )
 
             ExposedDropdownMenu(
@@ -105,7 +127,6 @@ fun AddMenuItemToOrderView(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Campo de cantidad
         OutlinedTextField(
             value = quantity,
             onValueChange = { newValue ->
@@ -132,7 +153,6 @@ fun AddMenuItemToOrderView(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Campo de instrucciones especiales
         OutlinedTextField(
             value = specialInstructions,
             onValueChange = { specialInstructions = it },
@@ -146,7 +166,6 @@ fun AddMenuItemToOrderView(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Botón de guardar
         Button(
             onClick = {
                 val selectedItem = selectedMenuItem
@@ -170,6 +189,7 @@ fun AddMenuItemToOrderView(
             enabled = !isLoading &&
                      selectedMenuItem != null &&
                      quantityError == null &&
+                     duplicateError == null &&
                      quantity.isNotBlank()
         ) {
             if (isLoading) {
