@@ -33,6 +33,7 @@ import java.time.format.DateTimeFormatter
 fun OrdersView(viewModel: OrderViewModel, navController: NavController) {
     val orders by viewModel.ordersLiveData.observeAsState()
     val showAddScreen by viewModel.showAddScreen.observeAsState(false)
+    val showActiveOnly = remember { mutableStateOf(true) }
 
     val webSocketViewModel: WebSocketViewModel = viewModel()
 
@@ -49,6 +50,13 @@ fun OrdersView(viewModel: OrderViewModel, navController: NavController) {
         )
     }
 
+    LaunchedEffect(showActiveOnly.value) {
+        if (showActiveOnly.value) {
+            viewModel.fetchActiveOrders()
+        } else {
+            viewModel.fetchOrders()
+        }
+    }
 
     LaunchedEffect(showAddScreen) {
         if (showAddScreen) {
@@ -59,37 +67,62 @@ fun OrdersView(viewModel: OrderViewModel, navController: NavController) {
         }
     }
 
-    Box(
+    Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        when {
-            orders == null -> {
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center)
-                )
+        SingleChoiceSegmentedButtonRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+        ) {
+            SegmentedButton(
+                selected = !showActiveOnly.value,
+                onClick = { showActiveOnly.value = false },
+                shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2)
+            ) {
+                Text("Todos")
             }
-
-            orders!!.isEmpty() -> {
-                Text(
-                    text = "No hay órdenes activas",
-                    modifier = Modifier.align(Alignment.Center),
-                    style = MaterialTheme.typography.bodyLarge
-                )
+            SegmentedButton(
+                selected = showActiveOnly.value,
+                onClick = { showActiveOnly.value = true },
+                shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2)
+            ) {
+                Text("Activos")
             }
+        }
 
-            else -> {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(orders!!) { order ->
-                        OrderListItem(
-                            order = order,
-                            onClick = {
-                                navController.navigate("orderDetail/${order.id}")
-                            }
-                        )
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            when {
+                orders == null -> {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+
+                orders!!.isEmpty() -> {
+                    Text(
+                        text = if (showActiveOnly.value) "No hay órdenes activas" else "No hay órdenes",
+                        modifier = Modifier.align(Alignment.Center),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+
+                else -> {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(orders!!) { order ->
+                            OrderListItem(
+                                order = order,
+                                onClick = {
+                                    navController.navigate("orderDetail/${order.id}")
+                                }
+                            )
+                        }
                     }
                 }
             }
