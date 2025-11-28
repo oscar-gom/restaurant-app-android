@@ -140,7 +140,6 @@ fun OrderDetailView(
     if (showAddSheet) {
         ModalBottomSheet(
             onDismissRequest = {
-                showAddSheet = false
             },
             sheetState = sheetState
         ) {
@@ -152,7 +151,6 @@ fun OrderDetailView(
                     onOrderItemAdded = {
                         scope.launch {
                             sheetState.hide()
-                            showAddSheet = false
                             orderItemViewModel.fetchOrderItemsByOrderId(currentOrder.id.toInt())
                         }
                     }
@@ -248,7 +246,8 @@ fun TotalCard(total: Double) {
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            contentColor = MaterialTheme.colorScheme.onSurface
         )
     ) {
         Row(
