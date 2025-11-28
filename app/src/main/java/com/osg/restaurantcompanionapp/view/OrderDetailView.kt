@@ -17,6 +17,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -83,7 +84,7 @@ fun OrderDetailView(
             )
         },
         floatingActionButton = {
-            androidx.compose.material3.FloatingActionButton(
+            FloatingActionButton(
                 onClick = {
                     showAddSheet = true
                 }
