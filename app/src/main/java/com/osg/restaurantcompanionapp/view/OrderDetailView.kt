@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.osg.restaurantcompanionapp.model.OrderItem
 import com.osg.restaurantcompanionapp.viewmodel.MenuItemViewModel
 import com.osg.restaurantcompanionapp.viewmodel.OrderItemViewModel
@@ -49,6 +50,7 @@ import java.util.Locale
 @Composable
 fun OrderDetailView(
     orderId: Int,
+    navController: NavController,
     orderViewModel: OrderViewModel = viewModel(),
     orderItemViewModel: OrderItemViewModel = viewModel(),
     menuItemViewModel: MenuItemViewModel = viewModel()
@@ -131,6 +133,7 @@ fun OrderDetailView(
                 else -> {
                     OrderItemsList(
                         orderItems = orderItems!!,
+                        navController = navController,
                         modifier = Modifier.fillMaxSize()
                     )
                 }
@@ -167,6 +170,7 @@ fun OrderDetailView(
 @Composable
 fun OrderItemsList(
     orderItems: List<OrderItem>,
+    navController: NavController,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -174,7 +178,10 @@ fun OrderItemsList(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         items(orderItems) { orderItem ->
-            OrderItemCard(orderItem = orderItem)
+            OrderItemCard(
+                orderItem = orderItem,
+                navController = navController
+            )
         }
 
         item {
@@ -184,11 +191,18 @@ fun OrderItemsList(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OrderItemCard(orderItem: OrderItem) {
+fun OrderItemCard(
+    orderItem: OrderItem,
+    navController: NavController
+) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        onClick = {
+            navController.navigate("editOrderItem/${orderItem.orderId}/${orderItem.menuItemId}")
+        }
     ) {
         Column(
             modifier = Modifier

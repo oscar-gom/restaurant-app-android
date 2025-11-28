@@ -20,6 +20,11 @@ sealed class NavItem(val route: String, val title: String, val icon: ImageVector
         fun createRoute(menuItemId: Long) = "menuItemDetail/$menuItemId"
     }
 
+    object EditOrderItem :
+        NavItem("editOrderItem/{orderId}/{menuItemId}", "Edit Order Item", Icons.AutoMirrored.Filled.List) {
+        fun createRoute(orderId: Long, menuItemId: Long) = "editOrderItem/$orderId/$menuItemId"
+    }
+
     companion object {
         val all = listOf(Orders, MenuItem, Settings)
     }

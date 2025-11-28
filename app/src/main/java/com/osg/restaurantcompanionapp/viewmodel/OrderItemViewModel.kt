@@ -58,6 +58,7 @@ class OrderItemViewModel : ViewModel() {
         }
     }
 
+
     fun fetchOrderItemByIds(orderId: Int, menuItemId: Int) {
         viewModelScope.launch {
             val orderItem = _orderItemRepository.getOrderItemByIds(orderId, menuItemId)
@@ -104,6 +105,10 @@ class OrderItemViewModel : ViewModel() {
             val result = _orderItemRepository.updateOrderItem(orderId, menuItemId, orderItem)
             _updateOrderItemResult.postValue(result)
         }
+    }
+
+    fun resetUpdateOrderItemResult() {
+        _updateOrderItemResult.value = null
     }
 
     fun deleteOrderItem(orderId: Int, menuItemId: Int) {

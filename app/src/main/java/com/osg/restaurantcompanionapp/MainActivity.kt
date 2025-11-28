@@ -15,6 +15,7 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.osg.restaurantcompanionapp.navigation.NavItem
 import com.osg.restaurantcompanionapp.ui.theme.RestaurantCompanionAppTheme
+import com.osg.restaurantcompanionapp.view.EditOrderItemView
 import com.osg.restaurantcompanionapp.view.MenuItemDetailView
 import com.osg.restaurantcompanionapp.view.MenuItemsView
 import com.osg.restaurantcompanionapp.view.OrderDetailView
@@ -62,7 +63,7 @@ fun AppRoot() {
             arguments = listOf(navArgument("orderId") { type = NavType.IntType })
         ) { backStackEntry ->
             val orderId = backStackEntry.arguments?.getInt("orderId") ?: 0
-            OrderDetailView(orderId = orderId)
+            OrderDetailView(orderId = orderId, navController = navController)
         }
 
         composable(NavItem.MenuItem.route) {
@@ -81,6 +82,22 @@ fun AppRoot() {
         ) { backStackEntry ->
             val menuItemId = backStackEntry.arguments?.getLong("menuItemId") ?: 0L
             MenuItemDetailView(menuItemId = menuItemId, navController = navController)
+        }
+
+        composable(
+            route = NavItem.EditOrderItem.route,
+            arguments = listOf(
+                navArgument("orderId") { type = NavType.LongType },
+                navArgument("menuItemId") { type = NavType.LongType }
+            )
+        ) { backStackEntry ->
+            val orderId = backStackEntry.arguments?.getLong("orderId") ?: 0L
+            val menuItemId = backStackEntry.arguments?.getLong("menuItemId") ?: 0L
+            EditOrderItemView(
+                orderId = orderId,
+                menuItemId = menuItemId,
+                navController = navController
+            )
         }
 
         composable(NavItem.Settings.route) {

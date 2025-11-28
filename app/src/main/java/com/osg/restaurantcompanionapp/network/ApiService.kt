@@ -14,10 +14,10 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 
 
-private const val baseUrl = "http://192.168.1.150:8080"
+private const val baseUrl = "http://192.168.1.161:8080"
 
 // URL de WebSocket STOMP
-const val WS_URL = "ws://192.168.1.150:8080/ws"
+const val WS_URL = "ws://192.168.1.161:8080/ws"
 const val ORDERS_TOPIC = "/topic/orders"
 
 val retrofit: Retrofit = Retrofit.Builder()
@@ -79,6 +79,7 @@ interface ApiService {
 
     @POST("/api/order-items/create")
     suspend fun createOrderItem(@Body orderItem: OrderItem): Response<OrderItem>
+
 
     @PUT("/api/order-items/update/{orderId}/{menuItemId}")
     suspend fun updateOrderItem(
