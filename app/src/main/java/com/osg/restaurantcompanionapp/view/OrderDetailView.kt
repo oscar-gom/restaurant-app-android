@@ -33,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -64,19 +65,28 @@ fun OrderDetailView(
     val orderItems by orderItemViewModel.orderItemsByOrderIdLiveData.observeAsState()
     val isLoading by orderItemViewModel.isLoading.observeAsState(false)
     val errorMessage by orderItemViewModel.errorMessage.observeAsState()
+    val updateOrderResult by orderViewModel.updateOrderResult.observeAsState()
 
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
     var showAddSheet by remember { mutableStateOf(false) }
     var showStatusMenu by remember { mutableStateOf(false) }
+    var refreshTrigger by remember { mutableIntStateOf(0) }
 
-    LaunchedEffect(orderId) {
+    LaunchedEffect(orderId, refreshTrigger) {
         orderViewModel.fetchOrderById(orderId)
     }
 
     LaunchedEffect(order) {
         order?.let {
             orderItemViewModel.fetchOrderItemsByOrderId(it.id.toInt())
+        }
+    }
+
+    LaunchedEffect(updateOrderResult) {
+        updateOrderResult?.let { _ ->
+            refreshTrigger++
+            orderViewModel.resetUpdateOrderResult()
         }
     }
 
@@ -113,7 +123,6 @@ fun OrderDetailView(
                                             val updatedOrder = currentOrder.copy(status = status)
                                             orderViewModel.updateOrder(currentOrder.id.toInt(), updatedOrder)
                                             showStatusMenu = false
-                                            orderViewModel.fetchOrderById(orderId)
                                         }
                                     )
                                 }

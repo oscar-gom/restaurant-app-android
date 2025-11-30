@@ -95,6 +95,10 @@ class OrderViewModel : ViewModel() {
         }
     }
 
+    fun resetUpdateOrderResult() {
+        _updateOrderResult.postValue(null)
+    }
+
     fun deleteOrder(id: Int) {
         viewModelScope.launch {
             val result = _orderRepository.deleteOrder(id)
