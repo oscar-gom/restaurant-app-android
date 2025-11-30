@@ -34,7 +34,9 @@ fun BaseScaffold(
                 actions = {
                     IconButton(onClick = {
                         if (navController.currentDestination?.route != NavItem.Settings.route) {
-                            navController.navigate(NavItem.Settings.route)
+                            navController.navigate(NavItem.Settings.route) {
+                                launchSingleTop = true
+                            }
                         }
                     }) {
                         Icon(Icons.Default.Settings, contentDescription = "Settings")
@@ -54,10 +56,9 @@ fun BaseScaffold(
                             if (currentRoute != item.route) {
                                 navController.navigate(item.route) {
                                     popUpTo(navController.graph.startDestinationId) {
-                                        saveState = true
+                                        inclusive = false
                                     }
                                     launchSingleTop = true
-                                    restoreState = true
                                 }
                             }
                         },
