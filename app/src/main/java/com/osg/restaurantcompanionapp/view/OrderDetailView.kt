@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -44,6 +45,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.osg.restaurantcompanionapp.view.component.DeleteConfirmationDialog
 import com.osg.restaurantcompanionapp.model.OrderItem
 import com.osg.restaurantcompanionapp.model.Status
 import com.osg.restaurantcompanionapp.viewmodel.MenuItemViewModel
@@ -66,12 +68,14 @@ fun OrderDetailView(
     val isLoading by orderItemViewModel.isLoading.observeAsState(false)
     val errorMessage by orderItemViewModel.errorMessage.observeAsState()
     val updateOrderResult by orderViewModel.updateOrderResult.observeAsState()
+    val deleteOrderItemResult by orderItemViewModel.deleteOrderItemResult.observeAsState()
 
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
     var showAddSheet by remember { mutableStateOf(false) }
     var showStatusMenu by remember { mutableStateOf(false) }
     var refreshTrigger by remember { mutableIntStateOf(0) }
+    var orderItemPendingDeletion by remember { mutableStateOf<OrderItem?>(null) }
 
     LaunchedEffect(orderId, refreshTrigger) {
         orderViewModel.fetchOrderById(orderId)
@@ -87,6 +91,15 @@ fun OrderDetailView(
         updateOrderResult?.let { _ ->
             refreshTrigger++
             orderViewModel.resetUpdateOrderResult()
+        }
+    }
+
+    // Refrescar lista tras borrar un OrderItem
+    LaunchedEffect(deleteOrderItemResult) {
+        deleteOrderItemResult?.let { success ->
+            if (success) {
+                orderItemViewModel.fetchOrderItemsByOrderId(orderId)
+            }
         }
     }
 
@@ -181,7 +194,10 @@ fun OrderDetailView(
                     OrderItemsList(
                         orderItems = orderItems!!,
                         navController = navController,
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
+                        onDelete = { item ->
+                            orderItemPendingDeletion = item
+                        }
                     )
                 }
             }
@@ -212,29 +228,19 @@ fun OrderDetailView(
             }
         }
     }
-}
 
-@Composable
-fun OrderItemsList(
-    orderItems: List<OrderItem>,
-    navController: NavController,
-    modifier: Modifier = Modifier
-) {
-    LazyColumn(
-        modifier = modifier.padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        items(orderItems) { orderItem ->
-            OrderItemCard(
-                orderItem = orderItem,
-                navController = navController
-            )
-        }
-
-        item {
-            Spacer(modifier = Modifier.height(8.dp))
-            TotalCard(total = orderItems.sumOf { it.subtotal })
-        }
+    orderItemPendingDeletion?.let { item ->
+        DeleteConfirmationDialog(
+            title = "Delete item",
+            message = "Are you sure you want to delete '${item.menuItemName}' from this order? This action cannot be undone.",
+            onConfirm = {
+                orderItemViewModel.deleteOrderItem(item.orderId.toInt(), item.menuItemId.toInt())
+                orderItemPendingDeletion = null
+            },
+            onDismiss = {
+                orderItemPendingDeletion = null
+            }
+        )
     }
 }
 
@@ -242,7 +248,8 @@ fun OrderItemsList(
 @Composable
 fun OrderItemCard(
     orderItem: OrderItem,
-    navController: NavController
+    navController: NavController,
+    onDelete: (OrderItem) -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -284,12 +291,22 @@ fun OrderItemCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-                Text(
-                    text = "$${String.format(Locale.US, "%.2f", orderItem.subtotal)}",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
-                )
+                Column(horizontalAlignment = Alignment.End) {
+                    Text(
+                        text = "$${String.format(Locale.US, "%.2f", orderItem.subtotal)}",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    TextButton(onClick = { onDelete(orderItem) }) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Delete item",
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
             }
 
             if (orderItem.specialInstructions.isNotEmpty()) {
@@ -305,6 +322,33 @@ fun OrderItemCard(
     }
 }
 
+@Composable
+fun OrderItemsList(
+    orderItems: List<OrderItem>,
+    navController: NavController,
+    modifier: Modifier = Modifier,
+    onDelete: (OrderItem) -> Unit
+) {
+    LazyColumn(
+        modifier = modifier.padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        items(orderItems) { orderItem ->
+            OrderItemCard(
+                orderItem = orderItem,
+                navController = navController,
+                onDelete = onDelete
+            )
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(8.dp))
+            TotalCard(total = orderItems.sumOf { it.subtotal })
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TotalCard(total: Double) {
     Card(
@@ -336,4 +380,3 @@ fun TotalCard(total: Double) {
         }
     }
 }
-

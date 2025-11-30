@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -31,6 +32,7 @@ import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -46,6 +48,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.osg.restaurantcompanionapp.view.component.DeleteConfirmationDialog
 import com.osg.restaurantcompanionapp.model.Order
 import com.osg.restaurantcompanionapp.model.Status
 import com.osg.restaurantcompanionapp.network.ORDERS_TOPIC
@@ -62,6 +65,8 @@ fun OrdersView(viewModel: OrderViewModel, navController: NavController) {
     val orders by viewModel.ordersLiveData.observeAsState()
     val showAddScreen by viewModel.showAddScreen.observeAsState(false)
     val showActiveOnly = rememberSaveable { mutableStateOf(true) }
+    val deleteOrderResult by viewModel.deleteOrderResult.observeAsState()
+    val orderPendingDeletion = remember { mutableStateOf<Order?>(null) }
 
     val webSocketViewModel: WebSocketViewModel = viewModel()
 
@@ -92,6 +97,19 @@ fun OrdersView(viewModel: OrderViewModel, navController: NavController) {
                 sheetState.show()
             }
             viewModel.onAddScreenShown()
+        }
+    }
+
+    // Refrescar lista tras una eliminación
+    LaunchedEffect(deleteOrderResult) {
+        deleteOrderResult?.let { success ->
+            if (success) {
+                if (showActiveOnly.value) {
+                    viewModel.fetchActiveOrders()
+                } else {
+                    viewModel.fetchOrders()
+                }
+            }
         }
     }
 
@@ -151,6 +169,9 @@ fun OrdersView(viewModel: OrderViewModel, navController: NavController) {
                                     order = order,
                                     onClick = {
                                         navController.navigate("orderDetail/${order.id}")
+                                    },
+                                    onDelete = { orderToDelete ->
+                                        orderPendingDeletion.value = orderToDelete
                                     }
                                 )
                             }
@@ -193,10 +214,24 @@ fun OrdersView(viewModel: OrderViewModel, navController: NavController) {
             )
         }
     }
+
+    orderPendingDeletion.value?.let { orderToDelete ->
+        DeleteConfirmationDialog(
+            title = "Delete order",
+            message = "Are you sure you want to delete order #${orderToDelete.id}? This action cannot be undone.",
+            onConfirm = {
+                viewModel.deleteOrder(orderToDelete.id.toInt())
+                orderPendingDeletion.value = null
+            },
+            onDismiss = {
+                orderPendingDeletion.value = null
+            }
+        )
+    }
 }
 
 @Composable
-fun OrderListItem(order: Order, onClick: () -> Unit) {
+fun OrderListItem(order: Order, onClick: () -> Unit, onDelete: (Order) -> Unit) {
     val formattedTime = LocalDateTime.parse(order.orderTime)
         .format(DateTimeFormatter.ofPattern("dd-MM-yyyy – HH:mm:ss"))
 
@@ -220,12 +255,22 @@ fun OrderListItem(order: Order, onClick: () -> Unit) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = "Order #${order.id}",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                StatusChip(status = order.status)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "Order #${order.id}",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.size(12.dp))
+                    StatusChip(status = order.status)
+                }
+                TextButton(onClick = { onDelete(order) }) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Delete order",
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                }
             }
             Spacer(modifier = Modifier.height(8.dp))
             Text(

@@ -117,4 +117,8 @@ class OrderItemViewModel : ViewModel() {
             _deleteOrderItemResult.postValue(result)
         }
     }
+
+    fun resetOrderItemsByMenuItemId() {
+        _orderItemsByMenuItemIdLiveData.value = null
+    }
 }
