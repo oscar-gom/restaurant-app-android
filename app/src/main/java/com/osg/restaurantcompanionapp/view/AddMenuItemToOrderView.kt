@@ -8,9 +8,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.osg.restaurantcompanionapp.model.MenuItem
 import com.osg.restaurantcompanionapp.model.OrderItem
+import com.osg.restaurantcompanionapp.util.CurrencyFormatter
 import com.osg.restaurantcompanionapp.viewmodel.MenuItemViewModel
 import com.osg.restaurantcompanionapp.viewmodel.OrderItemViewModel
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -110,7 +110,7 @@ fun AddMenuItemToOrderView(
                                     style = MaterialTheme.typography.bodyLarge
                                 )
                                 Text(
-                                    text = "$${String.format(Locale.US, "%.2f", menuItem.price)}",
+                                    text = CurrencyFormatter.format(menuItem.price),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )

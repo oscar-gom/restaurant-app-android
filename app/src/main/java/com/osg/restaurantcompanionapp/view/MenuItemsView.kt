@@ -43,6 +43,7 @@ import com.osg.restaurantcompanionapp.view.component.DeleteConfirmationDialog
 import com.osg.restaurantcompanionapp.view.component.InfoDialog
 import com.osg.restaurantcompanionapp.view.component.LoadingDialog
 import com.osg.restaurantcompanionapp.model.MenuItem
+import com.osg.restaurantcompanionapp.util.CurrencyFormatter
 import com.osg.restaurantcompanionapp.viewmodel.MenuItemViewModel
 import com.osg.restaurantcompanionapp.viewmodel.OrderItemViewModel
 import kotlinx.coroutines.launch
@@ -200,7 +201,7 @@ fun MenuItemItem(menuItem: MenuItem, onClick: () -> Unit, onDelete: (MenuItem) -
                 Text(menuItem.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = "$${String.format("%.2f", menuItem.price)}",
+                        text = CurrencyFormatter.format(menuItem.price),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary

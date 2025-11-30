@@ -48,11 +48,11 @@ import androidx.navigation.NavController
 import com.osg.restaurantcompanionapp.view.component.DeleteConfirmationDialog
 import com.osg.restaurantcompanionapp.model.OrderItem
 import com.osg.restaurantcompanionapp.model.Status
+import com.osg.restaurantcompanionapp.util.CurrencyFormatter
 import com.osg.restaurantcompanionapp.viewmodel.MenuItemViewModel
 import com.osg.restaurantcompanionapp.viewmodel.OrderItemViewModel
 import com.osg.restaurantcompanionapp.viewmodel.OrderViewModel
 import kotlinx.coroutines.launch
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -280,20 +280,14 @@ fun OrderItemCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = "Price: $${
-                            String.format(
-                                Locale.US,
-                                "%.2f",
-                                orderItem.menuItemPrice
-                            )
-                        }",
+                        text = "Price: ${CurrencyFormatter.format(orderItem.menuItemPrice)}",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
-                        text = "$${String.format(Locale.US, "%.2f", orderItem.subtotal)}",
+                        text = CurrencyFormatter.format(orderItem.subtotal),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
@@ -372,7 +366,7 @@ fun TotalCard(total: Double) {
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "$${String.format(Locale.US, "%.2f", total)}",
+                text = CurrencyFormatter.format(total),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary

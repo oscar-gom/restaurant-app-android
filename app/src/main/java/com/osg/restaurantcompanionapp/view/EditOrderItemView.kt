@@ -14,8 +14,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.osg.restaurantcompanionapp.model.OrderItem
+import com.osg.restaurantcompanionapp.util.CurrencyFormatter
 import com.osg.restaurantcompanionapp.viewmodel.OrderItemViewModel
-import java.util.Locale
 
 private data class OrderItemFormState(
     val quantity: MutableState<String>,
@@ -265,7 +265,7 @@ private fun MenuItemInfoCard(orderItem: OrderItem) {
                 style = MaterialTheme.typography.titleLarge
             )
             Text(
-                text = "Price: $${String.format(Locale.US, "%.2f", orderItem.menuItemPrice)}",
+                text = "Price: ${CurrencyFormatter.format(orderItem.menuItemPrice)}",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -355,7 +355,7 @@ private fun SubtotalDisplay(
                 style = MaterialTheme.typography.titleMedium
             )
             Text(
-                text = "$${String.format(Locale.US, "%.2f", subtotal)}",
+                text = CurrencyFormatter.format(subtotal),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.primary
             )

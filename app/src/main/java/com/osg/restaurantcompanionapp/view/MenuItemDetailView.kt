@@ -14,7 +14,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.osg.restaurantcompanionapp.model.MenuItem
+import com.osg.restaurantcompanionapp.util.CurrencyFormatter
 import com.osg.restaurantcompanionapp.viewmodel.MenuItemViewModel
+import java.text.NumberFormat
+import java.util.Locale
 
 private data class MenuItemFormState(
     val name: MutableState<String>,
@@ -286,6 +289,10 @@ private fun PriceTextField(
     onValueChange: (String) -> Unit,
     enabled: Boolean
 ) {
+    val currencySymbol = remember {
+        NumberFormat.getCurrencyInstance(Locale.getDefault()).currency?.symbol ?: "$"
+    }
+
     val isError = value.isNotEmpty() &&
                   (value.toDoubleOrNull() == null || value.toDoubleOrNull()!! <= 0)
 
@@ -293,14 +300,13 @@ private fun PriceTextField(
         OutlinedTextField(
             value = value,
             onValueChange = { newValue ->
-                // Solo permitir números y punto decimal
                 if (newValue.isEmpty() || newValue.matches(Regex("^\\d*\\.?\\d*$"))) {
                     onValueChange(newValue)
                 }
             },
             label = { Text("Price") },
             placeholder = { Text("12.50") },
-            prefix = { Text("$ ") },
+            prefix = { Text("$currencySymbol ") },
             singleLine = true,
             maxLines = 1,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
