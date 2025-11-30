@@ -31,6 +31,9 @@ class OrderViewModel : ViewModel() {
     private val _deleteOrderResult = MutableLiveData<Boolean>()
     val deleteOrderResult: LiveData<Boolean> = _deleteOrderResult
 
+    private val _deleteAllOrdersResult = MutableLiveData<String?>()
+    val deleteAllOrdersResult: LiveData<String?> = _deleteAllOrdersResult
+
     private val _showAddScreen = MutableLiveData<Boolean>()
     val showAddScreen: LiveData<Boolean> = _showAddScreen
 
@@ -103,6 +106,17 @@ class OrderViewModel : ViewModel() {
         viewModelScope.launch {
             val result = _orderRepository.deleteOrder(id)
             _deleteOrderResult.postValue(result)
+        }
+    }
+
+    fun deleteAllOrders() {
+        viewModelScope.launch {
+            try {
+                _orderRepository.deleteAllOrders()
+                _deleteAllOrdersResult.postValue("Todas las órdenes han sido eliminadas.")
+            } catch (e: Exception) {
+                _deleteAllOrdersResult.postValue("Error al eliminar órdenes: ${e.message}")
+            }
         }
     }
 

@@ -29,4 +29,9 @@ class MenuItemRepository(val apiService: ApiService) {
         val response = apiService.deleteMenuItem(id)
         return response.isSuccessful
     }
+
+    suspend fun deleteAllMenuItems(): String? {
+        val response = apiService.deleteAllMenuItems()
+        return if (response.isSuccessful) response.body() else null
+    }
 }

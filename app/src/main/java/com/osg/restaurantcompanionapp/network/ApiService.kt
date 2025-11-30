@@ -45,6 +45,9 @@ interface ApiService {
     @DELETE("/api/orders/delete/{id}")
     suspend fun deleteOrder(@Path("id") id: Int): Response<Unit>
 
+    @DELETE("/api/orders/delete-all")
+    suspend fun deleteAllOrders(): Response<String>
+
     // Menu Items
     @GET("/api/menu-items")
     suspend fun getMenuItems(): Response<List<MenuItem>>
@@ -60,6 +63,9 @@ interface ApiService {
 
     @DELETE("/api/menu-items/delete/{id}")
     suspend fun deleteMenuItem(@Path("id") id: Int): Response<Unit>
+
+    @DELETE("/api/menu-items/delete-all")
+    suspend fun deleteAllMenuItems(): Response<String>
 
     // Order Items
     @GET("/api/order-items")
@@ -93,4 +99,7 @@ interface ApiService {
         @Path("orderId") orderId: Int,
         @Path("menuItemId") menuItemId: Int
     ): Response<Unit>
+
+    @DELETE("/api/order-items/delete-all")
+    suspend fun deleteAllOrderItems(): Response<String>
 }

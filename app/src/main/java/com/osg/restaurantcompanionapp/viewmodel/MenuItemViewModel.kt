@@ -28,6 +28,9 @@ class MenuItemViewModel : ViewModel() {
     private val _deleteMenuItemResult = MutableLiveData<Boolean>()
     val deleteMenuItemResult: LiveData<Boolean> = _deleteMenuItemResult
 
+    private val _deleteAllMenuItemsResult = MutableLiveData<String?>()
+    val deleteAllMenuItemsResult: LiveData<String?> = _deleteAllMenuItemsResult
+
     private val _showAddScreen = MutableLiveData<Boolean>()
     val showAddScreen: LiveData<Boolean> = _showAddScreen
 
@@ -71,6 +74,13 @@ class MenuItemViewModel : ViewModel() {
         viewModelScope.launch {
             val result = _menuItemRepository.deleteMenuItem(id)
             _deleteMenuItemResult.postValue(result)
+        }
+    }
+
+    fun deleteAllMenuItems() {
+        viewModelScope.launch {
+            val result = _menuItemRepository.deleteAllMenuItems()
+            _deleteAllMenuItemsResult.postValue(result)
         }
     }
 
