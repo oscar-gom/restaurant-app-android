@@ -13,14 +13,18 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -40,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.osg.restaurantcompanionapp.model.OrderItem
+import com.osg.restaurantcompanionapp.model.Status
 import com.osg.restaurantcompanionapp.viewmodel.MenuItemViewModel
 import com.osg.restaurantcompanionapp.viewmodel.OrderItemViewModel
 import com.osg.restaurantcompanionapp.viewmodel.OrderViewModel
@@ -63,6 +68,7 @@ fun OrderDetailView(
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
     var showAddSheet by remember { mutableStateOf(false) }
+    var showStatusMenu by remember { mutableStateOf(false) }
 
     LaunchedEffect(orderId) {
         orderViewModel.fetchOrderById(orderId)
@@ -79,9 +85,41 @@ fun OrderDetailView(
             TopAppBar(
                 title = {
                     Text(
-                        if (order != null) "#${order!!.id} – ${order!!.status.status}"
+                        if (order != null) "#${order!!.id} – Table ${order!!.tableNumber}"
                         else "Loading..."
                     )
+                },
+                actions = {
+                    order?.let { currentOrder ->
+                        Box {
+                            TextButton(onClick = { showStatusMenu = true }) {
+                                Text(
+                                    text = currentOrder.status.status,
+                                    style = MaterialTheme.typography.labelLarge
+                                )
+                                Icon(
+                                    imageVector = Icons.Default.ArrowDropDown,
+                                    contentDescription = "Change status"
+                                )
+                            }
+                            DropdownMenu(
+                                expanded = showStatusMenu,
+                                onDismissRequest = { showStatusMenu = false }
+                            ) {
+                                Status.entries.forEach { status ->
+                                    DropdownMenuItem(
+                                        text = { Text(status.status) },
+                                        onClick = {
+                                            val updatedOrder = currentOrder.copy(status = status)
+                                            orderViewModel.updateOrder(currentOrder.id.toInt(), updatedOrder)
+                                            showStatusMenu = false
+                                            orderViewModel.fetchOrderById(orderId)
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
             )
         },
