@@ -19,6 +19,7 @@ private const val baseUrl = "http://192.168.1.161:8080"
 // URL de WebSocket STOMP
 const val WS_URL = "ws://192.168.1.161:8080/ws"
 const val ORDERS_TOPIC = "/topic/orders"
+const val ORDER_ITEMS_TOPIC = "/topic/order-items"
 
 val retrofit: Retrofit = Retrofit.Builder()
     .baseUrl(baseUrl)

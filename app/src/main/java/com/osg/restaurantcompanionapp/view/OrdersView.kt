@@ -76,7 +76,7 @@ fun OrdersView(viewModel: OrderViewModel, navController: NavController) {
     LaunchedEffect(Unit) {
         viewModel.fetchActiveOrders()
 
-        webSocketViewModel.initialize(
+        webSocketViewModel.initializeOrders(
             orderViewModel = viewModel,
             wsUrl = WS_URL,
             topic = ORDERS_TOPIC

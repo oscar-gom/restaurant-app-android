@@ -31,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -48,10 +49,13 @@ import androidx.navigation.NavController
 import com.osg.restaurantcompanionapp.view.component.DeleteConfirmationDialog
 import com.osg.restaurantcompanionapp.model.OrderItem
 import com.osg.restaurantcompanionapp.model.Status
+import com.osg.restaurantcompanionapp.network.ORDER_ITEMS_TOPIC
+import com.osg.restaurantcompanionapp.network.WS_URL
 import com.osg.restaurantcompanionapp.util.CurrencyFormatter
 import com.osg.restaurantcompanionapp.viewmodel.MenuItemViewModel
 import com.osg.restaurantcompanionapp.viewmodel.OrderItemViewModel
 import com.osg.restaurantcompanionapp.viewmodel.OrderViewModel
+import com.osg.restaurantcompanionapp.viewmodel.WebSocketViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -70,6 +74,8 @@ fun OrderDetailView(
     val updateOrderResult by orderViewModel.updateOrderResult.observeAsState()
     val deleteOrderItemResult by orderItemViewModel.deleteOrderItemResult.observeAsState()
 
+    val webSocketViewModel: WebSocketViewModel = viewModel()
+
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
     var showAddSheet by remember { mutableStateOf(false) }
@@ -87,6 +93,21 @@ fun OrderDetailView(
         }
     }
 
+    LaunchedEffect(orderId) {
+        webSocketViewModel.initializeOrderItems(
+            orderItemViewModel = orderItemViewModel,
+            wsUrl = WS_URL,
+            topic = ORDER_ITEMS_TOPIC,
+            orderId = orderId
+        )
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            webSocketViewModel.disconnectOrderItems()
+        }
+    }
+
     LaunchedEffect(updateOrderResult) {
         updateOrderResult?.let { _ ->
             refreshTrigger++
@@ -94,7 +115,6 @@ fun OrderDetailView(
         }
     }
 
-    // Refrescar lista tras borrar un OrderItem
     LaunchedEffect(deleteOrderItemResult) {
         deleteOrderItemResult?.let { success ->
             if (success) {

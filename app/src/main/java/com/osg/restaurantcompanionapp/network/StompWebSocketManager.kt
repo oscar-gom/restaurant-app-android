@@ -1,7 +1,6 @@
 package com.osg.restaurantcompanionapp.network
 
 import com.google.gson.Gson
-import com.osg.restaurantcompanionapp.model.Order
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -13,8 +12,9 @@ import org.hildan.krossbow.stomp.StompSession
 import org.hildan.krossbow.stomp.subscribe
 import org.hildan.krossbow.websocket.okhttp.OkHttpWebSocketClient
 
-class StompWebSocketManager(
-    private val onOrderReceived: (Order) -> Unit
+class StompWebSocketManager<T>(
+    private val clazz: Class<T>,
+    private val onMessageReceived: (T) -> Unit
 ) {
     private val gson = Gson()
     private var stompSession: StompSession? = null
@@ -43,8 +43,8 @@ class StompWebSocketManager(
                     val message = frame.bodyAsText
 
                     try {
-                        val order = gson.fromJson(message, Order::class.java)
-                        onOrderReceived(order)
+                        val entity = gson.fromJson(message, clazz)
+                        onMessageReceived(entity)
                     } catch (_: Exception) {
                     }
                 }
