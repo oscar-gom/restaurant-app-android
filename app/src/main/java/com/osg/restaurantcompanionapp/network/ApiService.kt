@@ -3,6 +3,7 @@ package com.osg.restaurantcompanionapp.network
 import com.osg.restaurantcompanionapp.model.MenuItem
 import com.osg.restaurantcompanionapp.model.Order
 import com.osg.restaurantcompanionapp.model.OrderItem
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -47,7 +48,7 @@ interface ApiService {
     suspend fun deleteOrder(@Path("id") id: Int): Response<Unit>
 
     @DELETE("/api/orders/delete-all")
-    suspend fun deleteAllOrders(): Response<String>
+    suspend fun deleteAllOrders(): Response<ResponseBody>
 
     // Menu Items
     @GET("/api/menu-items")
@@ -66,7 +67,7 @@ interface ApiService {
     suspend fun deleteMenuItem(@Path("id") id: Int): Response<Unit>
 
     @DELETE("/api/menu-items/delete-all")
-    suspend fun deleteAllMenuItems(): Response<String>
+    suspend fun deleteAllMenuItems(): Response<ResponseBody>
 
     // Order Items
     @GET("/api/order-items")
@@ -102,5 +103,5 @@ interface ApiService {
     ): Response<Unit>
 
     @DELETE("/api/order-items/delete-all")
-    suspend fun deleteAllOrderItems(): Response<String>
+    suspend fun deleteAllOrderItems(): Response<ResponseBody>
 }

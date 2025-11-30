@@ -36,7 +36,9 @@ class OrderRepository(private val apiService: ApiService) {
 
     suspend fun deleteAllOrders(): String? {
         val response = apiService.deleteAllOrders()
-        return if (response.isSuccessful) response.body() else null
+        return if (response.isSuccessful) {
+            response.body()?.string()
+        } else null
     }
 
 }

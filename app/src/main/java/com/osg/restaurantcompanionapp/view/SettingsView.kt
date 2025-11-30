@@ -15,6 +15,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -33,6 +35,31 @@ fun SettingsView(
     orderItemViewModel: OrderItemViewModel = viewModel()
 ) {
     val showDeleteAllDialog = remember { mutableStateOf(false) }
+    val deletionStep = remember { mutableStateOf(0) }
+
+    val orderItemsDeleted = orderItemViewModel.deleteAllOrderItemsResult.observeAsState()
+    val ordersDeleted = orderViewModel.deleteAllOrdersResult.observeAsState()
+    val menuItemsDeleted = menuItemViewModel.deleteAllMenuItemsResult.observeAsState()
+
+    LaunchedEffect(orderItemsDeleted.value) {
+        if (deletionStep.value == 1 && orderItemsDeleted.value != null) {
+            deletionStep.value = 2
+            orderViewModel.deleteAllOrders()
+        }
+    }
+
+    LaunchedEffect(ordersDeleted.value) {
+        if (deletionStep.value == 2 && ordersDeleted.value != null) {
+            deletionStep.value = 3
+            menuItemViewModel.deleteAllMenuItems()
+        }
+    }
+
+    LaunchedEffect(menuItemsDeleted.value) {
+        if (deletionStep.value == 3 && menuItemsDeleted.value != null) {
+            deletionStep.value = 0
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -80,8 +107,7 @@ fun SettingsView(
             title = "Delete All Data",
             message = "Are you sure you want to delete ALL data (orders, menu items, and order items)? This action cannot be undone.",
             onConfirm = {
-                orderViewModel.deleteAllOrders()
-                menuItemViewModel.deleteAllMenuItems()
+                deletionStep.value = 1
                 orderItemViewModel.deleteAllOrderItems()
                 showDeleteAllDialog.value = false
             },

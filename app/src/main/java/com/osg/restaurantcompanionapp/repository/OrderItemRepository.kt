@@ -41,6 +41,8 @@ class OrderItemRepository(val apiService: ApiService) {
 
     suspend fun deleteAllOrderItems(): String? {
         val response = apiService.deleteAllOrderItems()
-        return if (response.isSuccessful) response.body() else null
+        return if (response.isSuccessful) {
+            response.body()?.string()
+        } else null
     }
 }
