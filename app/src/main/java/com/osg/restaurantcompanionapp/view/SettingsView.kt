@@ -1,19 +1,94 @@
 package com.osg.restaurantcompanionapp.view
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.osg.restaurantcompanionapp.view.component.DeleteConfirmationDialog
+import com.osg.restaurantcompanionapp.viewmodel.MenuItemViewModel
+import com.osg.restaurantcompanionapp.viewmodel.OrderItemViewModel
+import com.osg.restaurantcompanionapp.viewmodel.OrderViewModel
 
 @Composable
-fun SettingsView() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+fun SettingsView(
+    orderViewModel: OrderViewModel = viewModel(),
+    menuItemViewModel: MenuItemViewModel = viewModel(),
+    orderItemViewModel: OrderItemViewModel = viewModel()
+) {
+    val showDeleteAllDialog = remember { mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        Text("Settings Screen - Coming soon")
+        Text(
+            text = "Settings",
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.padding(bottom = 32.dp)
+        )
+
+        Text(
+            text = "Danger Zone",
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.error,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
+        Button(
+            onClick = { showDeleteAllDialog.value = true },
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.error
+            )
+        ) {
+            Icon(Icons.Default.Delete, contentDescription = null)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text("Delete All Data")
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = "This will delete all orders, menu items and order items",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+
+    if (showDeleteAllDialog.value) {
+        DeleteConfirmationDialog(
+            title = "Delete All Data",
+            message = "Are you sure you want to delete ALL data (orders, menu items, and order items)? This action cannot be undone.",
+            onConfirm = {
+                orderViewModel.deleteAllOrders()
+                menuItemViewModel.deleteAllMenuItems()
+                orderItemViewModel.deleteAllOrderItems()
+                showDeleteAllDialog.value = false
+            },
+            onDismiss = {
+                showDeleteAllDialog.value = false
+            }
+        )
     }
 }
 
