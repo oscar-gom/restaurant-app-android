@@ -1,5 +1,6 @@
 package com.osg.restaurantcompanionapp.view
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -21,6 +22,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.osg.restaurantcompanionapp.view.component.DeleteConfirmationDialog
@@ -64,6 +66,7 @@ fun SettingsView(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surfaceContainerLow)
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -77,7 +80,7 @@ fun SettingsView(
         Text(
             text = "Danger Zone",
             style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.error,
+            color = Color(0xFFEF5350),
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
@@ -85,7 +88,7 @@ fun SettingsView(
             onClick = { showDeleteAllDialog.value = true },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.error
+                containerColor = Color(0xFFEF5350)
             )
         ) {
             Icon(Icons.Default.Delete, contentDescription = null)
@@ -117,4 +120,3 @@ fun SettingsView(
         )
     }
 }
-

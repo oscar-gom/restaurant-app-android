@@ -1,5 +1,7 @@
 package com.osg.restaurantcompanionapp.view
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +23,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -36,6 +39,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -43,6 +47,7 @@ import com.osg.restaurantcompanionapp.view.component.DeleteConfirmationDialog
 import com.osg.restaurantcompanionapp.view.component.InfoDialog
 import com.osg.restaurantcompanionapp.view.component.LoadingDialog
 import com.osg.restaurantcompanionapp.model.MenuItem
+import com.osg.restaurantcompanionapp.ui.theme.minimalistCardElevation
 import com.osg.restaurantcompanionapp.util.CurrencyFormatter
 import com.osg.restaurantcompanionapp.viewmodel.MenuItemViewModel
 import com.osg.restaurantcompanionapp.viewmodel.OrderItemViewModel
@@ -84,7 +89,11 @@ fun MenuItemsView(viewModel: MenuItemViewModel, navController: NavController) {
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surfaceContainerLow)
+    ) {
         when {
             menuItems == null -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             menuItems!!.isEmpty() -> Text("No menu items available", modifier = Modifier.align(Alignment.Center), style = MaterialTheme.typography.bodyLarge)
@@ -113,8 +122,18 @@ fun MenuItemsView(viewModel: MenuItemViewModel, navController: NavController) {
 
         FloatingActionButton(
             onClick = { viewModel.onAdd() },
-            modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp)
-        ) { Icon(Icons.Default.Add, contentDescription = "Add menu item") }
+            modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            elevation = FloatingActionButtonDefaults.elevation(
+                defaultElevation = 2.dp,
+                pressedElevation = 4.dp,
+                focusedElevation = 2.dp,
+                hoveredElevation = 3.dp
+            )
+        ) {
+            Icon(Icons.Default.Add, contentDescription = "Add menu item")
+        }
     }
 
     if (sheetState.isVisible) {
@@ -190,7 +209,15 @@ fun MenuItemsView(viewModel: MenuItemViewModel, navController: NavController) {
 fun MenuItemItem(menuItem: MenuItem, onClick: () -> Unit, onDelete: (MenuItem) -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth().clickable { onClick() },
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = minimalistCardElevation(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface
+        ),
+        border = BorderStroke(
+            width = 1.5.dp,
+            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f)
+        )
     ) {
         Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
             Row(
@@ -208,7 +235,7 @@ fun MenuItemItem(menuItem: MenuItem, onClick: () -> Unit, onDelete: (MenuItem) -
                     )
                     Spacer(modifier = Modifier.height(0.dp))
                     TextButton(onClick = { onDelete(menuItem) }) {
-                        Icon(Icons.Default.Delete, contentDescription = "Delete menu item", tint = MaterialTheme.colorScheme.error)
+                        Icon(Icons.Default.Delete, contentDescription = "Delete menu item", tint = Color(0xFFEF5350))
                     }
                 }
             }

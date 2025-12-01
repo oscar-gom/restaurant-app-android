@@ -9,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -94,7 +95,8 @@ fun MenuItemDetailView(
     )
 
     Scaffold(
-        topBar = { MenuItemDetailTopBar(navController) }
+        topBar = { MenuItemDetailTopBar(navController) },
+        containerColor = MaterialTheme.colorScheme.surfaceContainerLow
     ) { paddingValues ->
         MenuItemDetailContent(
             modifier = Modifier.padding(paddingValues),
@@ -318,7 +320,7 @@ private fun PriceTextField(
         if (isError) {
             Text(
                 text = "Price must be a valid number greater than 0",
-                color = MaterialTheme.colorScheme.error,
+                color = Color(0xFFEF5350),
                 style = MaterialTheme.typography.bodySmall
             )
         }
@@ -379,4 +381,3 @@ private fun handleUpdateMenuItem(
     )
     viewModel.updateMenuItem(menuItemId.toInt(), updatedMenuItem)
 }
-

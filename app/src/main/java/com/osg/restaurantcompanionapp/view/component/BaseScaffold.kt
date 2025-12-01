@@ -2,7 +2,6 @@ package com.osg.restaurantcompanionapp.view.component
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -16,6 +15,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.osg.restaurantcompanionapp.navigation.NavItem
@@ -45,7 +45,9 @@ fun BaseScaffold(
             )
         },
         bottomBar = {
-            NavigationBar {
+            NavigationBar(
+                tonalElevation = 0.dp
+            ) {
                 val backStack by navController.currentBackStackEntryAsState()
                 val currentRoute = backStack?.destination?.route
                 val bottomNavItems = listOf(NavItem.Orders, NavItem.MenuItem)
@@ -69,7 +71,10 @@ fun BaseScaffold(
             }
         }
     ) { innerPadding ->
-        Surface(modifier = Modifier.padding(innerPadding)) {
+        Surface(
+            modifier = Modifier.padding(innerPadding),
+            tonalElevation = 0.dp
+        ) {
             content()
         }
     }

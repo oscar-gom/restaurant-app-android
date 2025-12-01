@@ -1,5 +1,7 @@
 package com.osg.restaurantcompanionapp.view
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +24,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -42,6 +45,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -49,6 +53,7 @@ import androidx.navigation.NavController
 import com.osg.restaurantcompanionapp.view.component.DeleteConfirmationDialog
 import com.osg.restaurantcompanionapp.model.OrderItem
 import com.osg.restaurantcompanionapp.model.Status
+import com.osg.restaurantcompanionapp.ui.theme.minimalistCardElevation
 import com.osg.restaurantcompanionapp.network.ORDER_ITEMS_TOPIC
 import com.osg.restaurantcompanionapp.network.WS_URL
 import com.osg.restaurantcompanionapp.util.CurrencyFormatter
@@ -169,7 +174,15 @@ fun OrderDetailView(
             FloatingActionButton(
                 onClick = {
                     showAddSheet = true
-                }
+                },
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                elevation = FloatingActionButtonDefaults.elevation(
+                    defaultElevation = 2.dp,
+                    pressedElevation = 4.dp,
+                    focusedElevation = 2.dp,
+                    hoveredElevation = 3.dp
+                )
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -181,6 +194,7 @@ fun OrderDetailView(
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .background(MaterialTheme.colorScheme.surfaceContainerLow)
                 .padding(innerPadding)
         ) {
             when {
@@ -196,7 +210,7 @@ fun OrderDetailView(
                         modifier = Modifier
                             .align(Alignment.Center)
                             .padding(16.dp),
-                        color = MaterialTheme.colorScheme.error
+                        color = Color(0xFFEF5350)
                     )
                 }
 
@@ -273,7 +287,15 @@ fun OrderItemCard(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        elevation = minimalistCardElevation(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface
+        ),
+        border = BorderStroke(
+            width = 1.5.dp,
+            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f)
+        ),
         onClick = {
             navController.navigate("editOrderItem/${orderItem.orderId}/${orderItem.menuItemId}")
         }
@@ -317,7 +339,7 @@ fun OrderItemCard(
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = "Delete item",
-                            tint = MaterialTheme.colorScheme.error
+                            tint = Color(0xFFEF5350)
                         )
                     }
                 }
@@ -367,10 +389,14 @@ fun OrderItemsList(
 fun TotalCard(total: Double) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        elevation = minimalistCardElevation(),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            contentColor = MaterialTheme.colorScheme.onSurface
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+        ),
+        border = BorderStroke(
+            width = 1.5.dp,
+            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
         )
     ) {
         Row(

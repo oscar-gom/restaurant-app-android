@@ -1,5 +1,7 @@
 package com.osg.restaurantcompanionapp.view
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,6 +25,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -44,6 +47,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -53,6 +57,7 @@ import com.osg.restaurantcompanionapp.model.Order
 import com.osg.restaurantcompanionapp.model.Status
 import com.osg.restaurantcompanionapp.network.ORDERS_TOPIC
 import com.osg.restaurantcompanionapp.network.WS_URL
+import com.osg.restaurantcompanionapp.ui.theme.minimalistCardElevation
 import com.osg.restaurantcompanionapp.viewmodel.OrderViewModel
 import com.osg.restaurantcompanionapp.viewmodel.WebSocketViewModel
 import kotlinx.coroutines.launch
@@ -114,7 +119,9 @@ fun OrdersView(viewModel: OrderViewModel, navController: NavController) {
     }
 
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surfaceContainerLow)
     ) {
         Column(
             modifier = Modifier.fillMaxSize()
@@ -129,14 +136,14 @@ fun OrdersView(viewModel: OrderViewModel, navController: NavController) {
                     onClick = { showActiveOnly.value = false },
                     shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2)
                 ) {
-                    Text("Todos")
+                    Text("All")
                 }
                 SegmentedButton(
                     selected = showActiveOnly.value,
                     onClick = { showActiveOnly.value = true },
                     shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2)
                 ) {
-                    Text("Activos")
+                    Text("Pending")
                 }
             }
 
@@ -185,7 +192,15 @@ fun OrdersView(viewModel: OrderViewModel, navController: NavController) {
             onClick = { viewModel.onAdd() },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(16.dp)
+                .padding(16.dp),
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            elevation = FloatingActionButtonDefaults.elevation(
+                defaultElevation = 2.dp,
+                pressedElevation = 4.dp,
+                focusedElevation = 2.dp,
+                hoveredElevation = 3.dp
+            )
         ) {
             Icon(
                 imageVector = Icons.Default.Add,
@@ -239,10 +254,14 @@ fun OrderListItem(order: Order, onClick: () -> Unit, onDelete: (Order) -> Unit) 
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() },
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        elevation = minimalistCardElevation(),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer,
-            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface
+        ),
+        border = BorderStroke(
+            width = 1.5.dp,
+            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f)
         )
     ) {
         Column(
@@ -268,7 +287,7 @@ fun OrderListItem(order: Order, onClick: () -> Unit, onDelete: (Order) -> Unit) 
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = "Delete order",
-                        tint = MaterialTheme.colorScheme.error
+                        tint = Color(0xFFEF5350)
                     )
                 }
             }
@@ -291,28 +310,24 @@ fun OrderListItem(order: Order, onClick: () -> Unit, onDelete: (Order) -> Unit) 
 @Composable
 fun StatusChip(status: Status) {
     val (backgroundColor, textColor) = when (status) {
-        Status.PENDING ->
-            Pair(
-                MaterialTheme.colorScheme.tertiaryContainer,
-                MaterialTheme.colorScheme.onTertiaryContainer
-            )
-
-        Status.COMPLETED ->
-            Pair(
-                MaterialTheme.colorScheme.primaryContainer,
-                MaterialTheme.colorScheme.onPrimaryContainer
-            )
-
-        Status.CANCELLED ->
-            Pair(
-                MaterialTheme.colorScheme.errorContainer,
-                MaterialTheme.colorScheme.onErrorContainer
-            )
+        Status.PENDING -> Pair(
+            Color(0xFFFFF3CD),
+            Color(0xFF856404)
+        )
+        Status.COMPLETED -> Pair(
+            Color(0xFFD4EDDA),
+            Color(0xFF155724)
+        )
+        Status.CANCELLED -> Pair(
+            MaterialTheme.colorScheme.errorContainer,
+            MaterialTheme.colorScheme.onErrorContainer
+        )
     }
 
     Surface(
         color = backgroundColor,
-        shape = MaterialTheme.shapes.small
+        shape = MaterialTheme.shapes.small,
+        tonalElevation = 0.dp
     ) {
         Text(
             text = when (status) {
@@ -322,7 +337,8 @@ fun StatusChip(status: Status) {
             },
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
             style = MaterialTheme.typography.labelMedium,
-            color = textColor
+            color = textColor,
+            fontWeight = FontWeight.Medium
         )
     }
 }
