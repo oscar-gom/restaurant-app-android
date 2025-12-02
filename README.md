@@ -30,7 +30,7 @@ This project provides a mobile client built with Kotlin and Jetpack Compose to m
 1) **Clone the repository**
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/oscar-gom/restaurant-app-android.git
 cd restaurantcompanionapp
 ```
 
