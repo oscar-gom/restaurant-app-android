@@ -39,11 +39,8 @@ fun AddMenuItemToOrderView(
     LaunchedEffect(createOrderItemResult) {
         if (createOrderItemResult != null) {
             isLoading = false
-            selectedMenuItem = null
-            quantity = "1"
-            specialInstructions = ""
-            duplicateError = null
             onOrderItemAdded()
+            orderItemViewModel.resetCreateOrderItemResult()
         }
     }
 

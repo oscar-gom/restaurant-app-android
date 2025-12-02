@@ -37,6 +37,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -81,12 +82,13 @@ fun OrderDetailView(
 
     val webSocketViewModel: WebSocketViewModel = viewModel()
 
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
     var showAddSheet by remember { mutableStateOf(false) }
     var showStatusMenu by remember { mutableStateOf(false) }
     var refreshTrigger by remember { mutableIntStateOf(0) }
     var orderItemPendingDeletion by remember { mutableStateOf<OrderItem?>(null) }
+    var sheetKey by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(orderId, refreshTrigger) {
         orderViewModel.fetchOrderById(orderId)
@@ -173,6 +175,7 @@ fun OrderDetailView(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
+                    sheetKey++
                     showAddSheet = true
                 },
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -206,7 +209,7 @@ fun OrderDetailView(
 
                 errorMessage != null -> {
                     Text(
-                        text = errorMessage ?: "Error desconocido",
+                        text = errorMessage ?: "Unknown error",
                         modifier = Modifier
                             .align(Alignment.Center)
                             .padding(16.dp),
@@ -216,7 +219,7 @@ fun OrderDetailView(
 
                 orderItems.isNullOrEmpty() -> {
                     Text(
-                        text = "No hay items en este pedido",
+                        text = "No items in this order. Tap the + button to add menu items.",
                         modifier = Modifier
                             .align(Alignment.Center)
                             .padding(16.dp),
@@ -246,19 +249,21 @@ fun OrderDetailView(
             sheetState = sheetState
         ) {
             order?.let { currentOrder ->
-                AddMenuItemToOrderView(
-                    orderId = currentOrder.id,
-                    existingOrderItems = orderItems ?: emptyList(),
-                    menuItemViewModel = menuItemViewModel,
-                    orderItemViewModel = orderItemViewModel,
-                    onOrderItemAdded = {
-                        scope.launch {
-                            sheetState.hide()
-                            showAddSheet = false
-                            orderItemViewModel.fetchOrderItemsByOrderId(currentOrder.id.toInt())
+                key(sheetKey) {
+                    AddMenuItemToOrderView(
+                        orderId = currentOrder.id,
+                        existingOrderItems = orderItems ?: emptyList(),
+                        menuItemViewModel = menuItemViewModel,
+                        orderItemViewModel = orderItemViewModel,
+                        onOrderItemAdded = {
+                            scope.launch {
+                                sheetState.hide()
+                                showAddSheet = false
+                                orderItemViewModel.fetchOrderItemsByOrderId(currentOrder.id.toInt())
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
         }
     }

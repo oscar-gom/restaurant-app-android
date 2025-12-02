@@ -103,6 +103,10 @@ class OrderItemViewModel : ViewModel() {
         }
     }
 
+    fun resetCreateOrderItemResult() {
+        _createOrderItemResult.value = null
+    }
+
     fun updateOrderItem(orderId: Int, menuItemId: Int, orderItem: OrderItem) {
         viewModelScope.launch {
             val result = _orderItemRepository.updateOrderItem(orderId, menuItemId, orderItem)
