@@ -90,7 +90,9 @@ This app consumes real-time updates exposed by the backend using STOMP-like topi
 - Tap a card to open Order Detail
 - Floating Action Button for creating orders (opens bottom sheet)
 
-[Add screenshot here]
+<img width="180" height="390" alt="imagen" src="https://github.com/user-attachments/assets/579bb433-da69-4305-b18f-151554f8cf5a" />
+<img width="180" height="390" alt="imagen" src="https://github.com/user-attachments/assets/39f51ad2-9666-407e-9893-43d76e1bfd3e" />
+<img width="180" height="390" alt="imagen" src="https://github.com/user-attachments/assets/fcc9a84e-fc2f-4e17-bee9-f9e739cff2b4" />
 
 ### Order Detail View
 - Shows order information and its order items
@@ -98,19 +100,17 @@ This app consumes real-time updates exposed by the backend using STOMP-like topi
 - Edit or delete order items
 - Change order status with a selector
 
-[Add screenshot here]
+<img width="180" height="390" alt="imagen" src="https://github.com/user-attachments/assets/c1818880-16f1-4999-aff8-9d2aa9626de2" />
 
 ### Menu Items View
 - List, create, edit, and delete menu items
 - Prevents deleting an item if it’s used in any order item and shows the related order IDs
 
-[Add screenshot here]
+<img width="180" height="390" alt="imagen" src="https://github.com/user-attachments/assets/630ef5f9-a1da-4fb3-bdc4-f5a43bcb45ea" />
 
 ### Settings
 - App preferences and global actions
 - "Delete All" (with confirmation) to clear datasets when needed
-
-[Add screenshot here]
 
 ## Design principles
 - Minimalist look aligned with Material 3: pastel palette, soft elevations, simple shapes
@@ -128,6 +128,3 @@ This app consumes real-time updates exposed by the backend using STOMP-like topi
 - If WebSocket returns 404, verify the path `/ws` and backend availability
 - If REST calls fail, confirm base URL/IP and network permissions (AndroidManifest)
 - For emulator access to localhost, use `10.0.2.2`
-
-## Contributing
-- Issues and PRs are welcome. Keep UI consistent with the minimalist Material 3 approach.
