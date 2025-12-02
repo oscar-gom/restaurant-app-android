@@ -159,7 +159,7 @@ fun OrdersView(viewModel: OrderViewModel, navController: NavController) {
 
                     orders!!.isEmpty() -> {
                         Text(
-                            text = if (showActiveOnly.value) "No hay órdenes activas" else "No hay órdenes",
+                            text = if (showActiveOnly.value) "No active orders" else "No orders",
                             modifier = Modifier.align(Alignment.Center),
                             style = MaterialTheme.typography.bodyLarge
                         )
