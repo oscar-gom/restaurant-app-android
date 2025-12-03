@@ -105,7 +105,6 @@ fun OrdersView(viewModel: OrderViewModel, navController: NavController) {
         }
     }
 
-    // Refrescar lista tras una eliminación
     LaunchedEffect(deleteOrderResult) {
         deleteOrderResult?.let { success ->
             if (success) {

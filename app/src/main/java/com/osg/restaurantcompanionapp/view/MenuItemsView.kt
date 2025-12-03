@@ -97,42 +97,44 @@ fun MenuItemsView(viewModel: MenuItemViewModel, navController: NavController) {
         when {
             menuItems == null -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             menuItems!!.isEmpty() -> Text("No menu items available", modifier = Modifier.align(Alignment.Center), style = MaterialTheme.typography.bodyLarge)
-            else -> LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(menuItems!!) { menuItem ->
-                    MenuItemItem(
-                        menuItem = menuItem,
-                        onClick = { navController.navigate("menuItemDetail/${menuItem.id}") },
-                        onDelete = { item ->
-                            isCheckingUsage.value = true
-                            cannotDeleteReason.value = null
-                            itemPendingDeletion.value = item
-                            usageCheckMenuItemId.value = item.id
-                            usageRequestToken.value = System.nanoTime()
-                            orderItemViewModel.resetOrderItemsByMenuItemId()
-                            orderItemViewModel.fetchOrderItemsByMenuItemId(item.id.toInt())
-                        }
+            else -> {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(menuItems!!) { menuItem ->
+                        MenuItemItem(
+                            menuItem = menuItem,
+                            onClick = { navController.navigate("menuItemDetail/${menuItem.id}") },
+                            onDelete = { item ->
+                                isCheckingUsage.value = true
+                                cannotDeleteReason.value = null
+                                itemPendingDeletion.value = item
+                                usageCheckMenuItemId.value = item.id
+                                usageRequestToken.value = System.nanoTime()
+                                orderItemViewModel.resetOrderItemsByMenuItemId()
+                                orderItemViewModel.fetchOrderItemsByMenuItemId(item.id.toInt())
+                            }
+                        )
+                    }
+                }
+
+                FloatingActionButton(
+                    onClick = { viewModel.onAdd() },
+                    modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    elevation = FloatingActionButtonDefaults.elevation(
+                        defaultElevation = 2.dp,
+                        pressedElevation = 4.dp,
+                        focusedElevation = 2.dp,
+                        hoveredElevation = 3.dp
                     )
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = "Add menu item")
                 }
             }
-        }
-
-        FloatingActionButton(
-            onClick = { viewModel.onAdd() },
-            modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            elevation = FloatingActionButtonDefaults.elevation(
-                defaultElevation = 2.dp,
-                pressedElevation = 4.dp,
-                focusedElevation = 2.dp,
-                hoveredElevation = 3.dp
-            )
-        ) {
-            Icon(Icons.Default.Add, contentDescription = "Add menu item")
         }
     }
 

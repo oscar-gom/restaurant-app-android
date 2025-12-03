@@ -22,6 +22,7 @@ import com.osg.restaurantcompanionapp.view.OrderDetailView
 import com.osg.restaurantcompanionapp.view.OrdersView
 import com.osg.restaurantcompanionapp.view.SettingsView
 import com.osg.restaurantcompanionapp.view.component.BaseScaffold
+import com.osg.restaurantcompanionapp.view.component.SwipeableScreens
 import com.osg.restaurantcompanionapp.viewmodel.MenuItemViewModel
 import com.osg.restaurantcompanionapp.viewmodel.OrderViewModel
 
@@ -40,6 +41,9 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppRoot() {
     val navController = rememberNavController()
+    val orderViewModel: OrderViewModel = viewModel()
+    val menuItemViewModel: MenuItemViewModel = viewModel()
+
     NavHost(
         navController = navController,
         startDestination = NavItem.Orders.route,
@@ -49,12 +53,38 @@ fun AppRoot() {
         popExitTransition = { ExitTransition.None }
     ) {
         composable(NavItem.Orders.route) {
-            val vm: OrderViewModel = viewModel()
             BaseScaffold(
                 navController = navController,
                 current = NavItem.Orders,
             ) {
-                OrdersView(viewModel = vm, navController = navController)
+                SwipeableScreens(
+                    currentRoute = NavItem.Orders.route,
+                    navController = navController,
+                    ordersContent = {
+                        OrdersView(viewModel = orderViewModel, navController = navController)
+                    },
+                    menuItemsContent = {
+                        MenuItemsView(viewModel = menuItemViewModel, navController = navController)
+                    }
+                )
+            }
+        }
+
+        composable(NavItem.MenuItem.route) {
+            BaseScaffold(
+                navController = navController,
+                current = NavItem.MenuItem,
+            ) {
+                SwipeableScreens(
+                    currentRoute = NavItem.MenuItem.route,
+                    navController = navController,
+                    ordersContent = {
+                        OrdersView(viewModel = orderViewModel, navController = navController)
+                    },
+                    menuItemsContent = {
+                        MenuItemsView(viewModel = menuItemViewModel, navController = navController)
+                    }
+                )
             }
         }
 
@@ -66,15 +96,6 @@ fun AppRoot() {
             OrderDetailView(orderId = orderId, navController = navController)
         }
 
-        composable(NavItem.MenuItem.route) {
-            val vm: MenuItemViewModel = viewModel()
-            BaseScaffold(
-                navController = navController,
-                current = NavItem.MenuItem,
-            ) {
-                MenuItemsView(viewModel = vm, navController = navController)
-            }
-        }
 
         composable(
             route = NavItem.MenuItemDetail.route,
